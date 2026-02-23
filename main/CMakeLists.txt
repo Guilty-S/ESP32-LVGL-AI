@@ -9,10 +9,6 @@ idf_component_register(
                  lv_port
                  lvgl
                  nvs_flash
-                 esp_wifi
-                 esp_http_server
-                 lwip
-                 json
-                 spiffs     # <--- 声明依赖
+                 ap_wifi
 )
 spiffs_create_partition_image(html ../html FLASH_IN_PROJECT)
