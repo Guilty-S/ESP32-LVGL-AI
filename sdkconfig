@@ -2177,6 +2177,11 @@ CONFIG_LV_USE_DEMO_WIDGETS=y
 # CONFIG_LV_USE_DEMO_MULTILANG is not set
 # end of Demos
 # end of LVGL configuration
+
+#
+# ESP LVGL PORT
+#
+# end of ESP LVGL PORT
 # end of Component config
 
 # CONFIG_IDF_EXPERIMENTAL_FEATURES is not set

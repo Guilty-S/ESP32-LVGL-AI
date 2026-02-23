@@ -10,5 +10,6 @@ idf_component_register(
                  lvgl
                  nvs_flash
                  ap_wifi
+                 esp_lvgl_port
 )
 spiffs_create_partition_image(html ../html FLASH_IN_PROJECT)
