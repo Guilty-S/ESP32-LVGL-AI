@@ -1,0 +1,9 @@
+# 过滤所有以 cmake-build 开头的文件夹
+cmake-build-*/
+cmake-build-debug/
+
+# 过滤 ESP-IDF 产生的临时文件
+build/
+.espressif/
+.tproject/
+.idea/
