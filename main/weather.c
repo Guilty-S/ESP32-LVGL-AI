@@ -15,6 +15,7 @@ static const char *TAG = "weather";
 static uint8_t weather_data_buff[WEATHER_BUFF_LEN];
 static int weather_data_size = 0;
 static char city_name[48];
+static char region_name[48];
 
 static esp_err_t _weather_http_event_handler(esp_http_client_event_t *evt) {
     switch (evt->event_id) {
@@ -105,8 +106,8 @@ static esp_err_t pasre_weather(const char *weather_data) {
 static esp_err_t weather_http_connect(void) {
     static char url[256];
     snprintf(url, sizeof(url),
-             "http://api.seniverse.com/v3/weather/daily.json?key=%s&location=%s&language=zh-Hans&unit=c&start=0&days=3",
-             WEATHER_PRIVATE_KEY, city_name);
+             "http://api.seniverse.com/v3/weather/daily.json?key=%s&location=%s%s&language=zh-Hans&unit=c&start=0&days=3",
+             WEATHER_PRIVATE_KEY, region_name, city_name);
     esp_http_client_config_t config =
             {
                     .url = url,
@@ -119,16 +120,11 @@ static esp_err_t weather_http_connect(void) {
     //此函数将完成一个完整HTTP请求才返回
     esp_err_t err = esp_http_client_perform(client);
     if (err == ESP_OK) {
-        // 确保在数据末尾加上字符串结束符
-        if (weather_data_size < WEATHER_BUFF_LEN) {
-            weather_data_buff[weather_data_size] = '\0';
-        } else {
-            weather_data_buff[WEATHER_BUFF_LEN - 1] = '\0';
-        }
-        pasre_weather((char *) weather_data_buff);
+        weather_data_buff[weather_data_size] = '\0'; // 必须加结束符
+        pasre_weather((char *) weather_data_buff);   // 只在这里解析一次
+    } else {
+        ESP_LOGE(TAG, "Weather request failed: %s", esp_err_to_name(err));
     }
-    //返回后解析天气信息
-    pasre_weather((char *) weather_data_buff);
     //释放掉HTTP资源
     esp_http_client_cleanup(client);
     return err;
@@ -145,9 +141,16 @@ static esp_err_t pasre_location(char *location_data) {
         ESP_LOGI(TAG, "Invaild location city");
         return ESP_FAIL;
     }
+    cJSON *region_js = cJSON_GetObjectItem(location_js, "regionName");
+    if (!region_js) {
+        ESP_LOGI(TAG, "Invaild location region");
+        return ESP_FAIL;
+    }
     snprintf(city_name, sizeof(city_name), "%s", cJSON_GetStringValue(city_js));
+    snprintf(region_name, sizeof(region_name), "%s", cJSON_GetStringValue(region_js));
     //地理位置保存在city_name中
     ESP_LOGI(TAG, "location->city name:%s", city_name);
+    ESP_LOGI(TAG, "location->region name:%s", region_name);
     cJSON_Delete(location_js);
     return ESP_OK;
 }
@@ -163,7 +166,7 @@ static esp_err_t location_http_connect(void) {
     esp_http_client_config_t config =
             {
                     .url = url,
-                    .event_handler = _weather_http_event_handler
+                    .event_handler = _weather_http_event_handler,
             };
     esp_http_client_handle_t client = esp_http_client_init(&config);
     memset(weather_data_buff, 0, WEATHER_BUFF_LEN);
