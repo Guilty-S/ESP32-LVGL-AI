@@ -6,6 +6,7 @@
 #include "st7735.h"  // 你的驱动
 #include "driver/gpio.h"
 #include "lvgl_private.h" // 某些 v9 版本可能需要此头文件来调用内部 swap
+#include "../../managed_components/espressif__esp_lvgl_port/include/esp_lvgl_port.h"
 
 // 按键定义
 #define BTN_PREV_IO    14
@@ -115,27 +116,20 @@ void lv_indev_init(void)
     lv_group_set_default(g);
 }
 
-// ------------------ 心跳定时器 ------------------
-
-static void lv_tick_task(void *arg) {
-    lv_tick_inc(5); // 5ms
-}
-
-void lv_tick_init(void) {
-    const esp_timer_create_args_t periodic_timer_args = {
-            .callback = &lv_tick_task,
-            .name = "lvgl_tick"
-    };
-    esp_timer_handle_t periodic_timer;
-    esp_timer_create(&periodic_timer_args, &periodic_timer);
-    esp_timer_start_periodic(periodic_timer, 5 * 1000);
-}
-
 void lv_port_init(void)
 {
-    lv_init();
     ST7735_Init();
-    lv_disp_init();
-    lv_indev_init();
-    lv_tick_init();
+    const lvgl_port_cfg_t lvgl_cfg = {
+            .task_priority = 4,       // 任务优先级
+            .task_stack = 8192,       // 栈大小
+            .task_affinity = 1,       // 运行在核心 1
+            .task_max_sleep_ms = 500,
+            .timer_period_ms = 5      // Tick 周期
+    };
+    lvgl_port_init(&lvgl_cfg);
+    if(lvgl_port_lock(0)){
+        lv_disp_init();
+        lv_indev_init();
+        lvgl_port_unlock();
+    }
 }

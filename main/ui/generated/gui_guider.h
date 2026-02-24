@@ -50,7 +50,7 @@ extern lv_ui guider_ui;
 
 
 void setup_scr_screen(lv_ui *ui);
-LV_IMAGE_DECLARE(_1_RGB565A8_160x128);
+LV_IMAGE_DECLARE(_2_RGB565A8_160x128);
 
 
 

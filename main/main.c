@@ -73,14 +73,17 @@ void app_main(void) {
 //    button_init();
 //    ap_wifi_init(wifi_state_handle);
     lv_port_init();
-//    lvgl_port_lock(0);
-    setup_ui(&guider_ui);
-    custom_init(&guider_ui);
-    while(1)
-    {
-//        lv_task_handler();          //LVGL循环处理
-        vTaskDelay(pdMS_TO_TICKS(1));
+    if(lvgl_port_lock(portMAX_DELAY)){
+        setup_ui(&guider_ui);
+        custom_init(&guider_ui);
+        lvgl_port_unlock();
     }
+
+//    while(1)
+//    {
+////        lv_task_handler();          //LVGL循环处理
+//        vTaskDelay(pdMS_TO_TICKS(1));
+//    }
 //    lvgl_port_unlock();
 
 }
