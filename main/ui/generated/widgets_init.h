@@ -24,6 +24,7 @@ void digital_clock_count(int * hour, int * minute, int * seconds, char * meridie
 #endif
 
 
+void screen_home_label_big_timer(lv_timer_t *timer);
 
 
 #ifdef __cplusplus

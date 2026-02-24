@@ -1,4 +1,4 @@
-set(INCLUDES "." "./ui/generated" "./ui/custom" "./ui/generated/guider_customer_fonts")
+set(INCLUDES "." "./ui/generated" "./ui/custom" "./ui/generated/guider_customer_fonts" )
 file(GLOB_RECURSE SOURCES ./*.c)
 idf_component_register(
         SRCS ${SOURCES}
@@ -9,10 +9,7 @@ idf_component_register(
                  lv_port
                  lvgl
                  nvs_flash
-                 esp_wifi
-                 esp_http_server
-                 lwip
-                 json
-                 spiffs     # <--- 声明依赖
+                 ap_wifi
+                 esp_lvgl_port
 )
 spiffs_create_partition_image(html ../html FLASH_IN_PROJECT)

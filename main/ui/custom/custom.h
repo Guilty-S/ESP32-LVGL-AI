@@ -16,7 +16,7 @@ extern "C" {
 #include "gui_guider.h"
 
 void custom_init(lv_ui *ui);
-
+void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour, int min, int sec);
 #ifdef __cplusplus
 }
 #endif
