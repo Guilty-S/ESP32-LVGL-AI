@@ -33,7 +33,7 @@ static esp_err_t _weather_http_event_handler(esp_http_client_event_t *evt) {
             break;
         case HTTP_EVENT_ON_DATA: {
             ESP_LOGI(TAG, "HTTP_EVENT_ON_DATA, len=%d", evt->data_len);
-            printf("HTTP_EVENT_ON_DATA data=%.*s\r\n", evt->data_len, (char *) evt->data);
+//            printf("HTTP_EVENT_ON_DATA data=%.*s\r\n", evt->data_len, (char *) evt->data);
             int copy_len = 0;
             //因为这个HTTP_EVENT_ON_DATA事件可能会不只一次的触发，也就是
             //会分多次接收，因此这里需要考虑多次接收数据的完整
@@ -122,6 +122,7 @@ static esp_err_t weather_http_connect(void) {
     if (err == ESP_OK) {
         weather_data_buff[weather_data_size] = '\0'; // 必须加结束符
         pasre_weather((char *) weather_data_buff);   // 只在这里解析一次
+        ESP_LOGI(TAG, "Full data received: %s", (char *)weather_data_buff);
     } else {
         ESP_LOGE(TAG, "Weather request failed: %s", esp_err_to_name(err));
     }
