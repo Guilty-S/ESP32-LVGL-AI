@@ -15,7 +15,7 @@
 #include "esp_lvgl_port.h"
 #include <time.h>
 #include "esp_sntp.h"
-
+#include "weather.h"
 #define TAG     "main"
 lv_ui guider_ui;
 
@@ -85,12 +85,13 @@ void app_main(void) {
     ap_wifi_init(wifi_state_handle);
     setenv("TZ", "CST-8", 1);
     tzset();
-    while(1)
-    {
-//        lv_task_handler();          //LVGL循环处理
-        time_t now = time(NULL);
-        ESP_LOGI(TAG, "Current time: %lld", now);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
+    weather_start();
+//    while(1)
+//    {
+////        lv_task_handler();          //LVGL循环处理
+//        time_t now = time(NULL);
+//        ESP_LOGI(TAG, "Current time: %lld", now);
+//        vTaskDelay(pdMS_TO_TICKS(1000));
+//    }
 
 }
