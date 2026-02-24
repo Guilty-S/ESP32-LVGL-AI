@@ -37,7 +37,7 @@ static void button_handle(void *param);
 
 /** 设置按键事件
  * @param cfg   配置结构体
- * @return ESP_OK or ESP_FAIL 
+ * @return ESP_OK or ESP_FAIL
 */
 esp_err_t button_event_set(button_config_t *cfg)
 {
@@ -75,7 +75,7 @@ esp_err_t button_event_set(button_config_t *cfg)
 
 /** 定时器回调函数，本例中是5ms执行一次
  * @param cfg   配置结构体
- * @return ESP_OK or ESP_FAIL 
+ * @return ESP_OK or ESP_FAIL
 */
 static void button_handle(void *param)
 {
