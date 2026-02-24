@@ -9,12 +9,12 @@
 #include <driver/gpio.h>
 #include "button.h"
 #include "ap_wifi.h"
-#include <time.h>
-#include "esp_sntp.h"
 #include "lv_port.h"
 #include "gui_guider.h"
 #include "custom.h"
 #include "esp_lvgl_port.h"
+#include <time.h>
+#include "esp_sntp.h"
 
 #define TAG     "main"
 lv_ui guider_ui;
@@ -47,43 +47,48 @@ void button_init(void) {
     button_event_set(&button_cfg);
 }
 
+static void sntp_finish_callback(struct timeval *tv) {
+
+}
+
+void my_sntp_init(void) {
+    if (!esp_sntp_enabled()) {
+        esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+        esp_sntp_setservername(0, "ntp.aliyun.com");//time.asia.apple.com、pool.ntp.org
+        esp_sntp_setservername(1, "time.asia.apple.com");
+        esp_sntp_setservername(2, "pool.ntp.org");
+        esp_sntp_set_time_sync_notification_cb(sntp_finish_callback);
+        esp_sntp_init();
+    }
+}
+
 void wifi_state_handle(WIFI_STATE state) {
     if (state == WIFI_STATE_CONNECTED) {
+        my_sntp_init();
         ESP_LOGI(TAG, "Wifi connected");
     } else if (state == WIFI_STATE_DISCONNECTED) {
         ESP_LOGI(TAG, "Wifi disconnected");
     }
 }
-//static void sntp_finish_callback(struct timeval *tv)
-//{
-//
-//}
 
-//void my_sntp_init(void)
-//{
-//    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-//    sntp_setservername(0, "ntp.aliyun.com");//time.asia.apple.com、pool.ntp.org
-//    sntp_setservername(1, "time.asia.apple.com");
-//    sntp_setservername(2, "pool.ntp.org");
-//    esp_sntp_set_time_sync_notification_cb()
-//    sntp_init();
-//}
 void app_main(void) {
-//    ESP_ERROR_CHECK(nvs_flash_init());
-//    button_init();
-//    ap_wifi_init(wifi_state_handle);
     lv_port_init();
-    if(lvgl_port_lock(portMAX_DELAY)){
+    if (lvgl_port_lock(portMAX_DELAY)) {
         setup_ui(&guider_ui);
         custom_init(&guider_ui);
         lvgl_port_unlock();
     }
-
-//    while(1)
-//    {
-////        lv_task_handler();          //LVGL循环处理
-//        vTaskDelay(pdMS_TO_TICKS(1));
-//    }
-//    lvgl_port_unlock();
+    ESP_ERROR_CHECK(nvs_flash_init());
+    button_init();
+    ap_wifi_init(wifi_state_handle);
+    setenv("TZ", "CST-8", 1);
+    tzset();
+    while(1)
+    {
+//        lv_task_handler();          //LVGL循环处理
+        time_t now = time(NULL);
+        ESP_LOGI(TAG, "Current time: %lld", now);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
 
 }
