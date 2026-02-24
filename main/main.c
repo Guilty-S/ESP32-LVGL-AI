@@ -48,7 +48,9 @@ void button_init(void) {
 }
 
 static void sntp_finish_callback(struct timeval *tv) {
-
+    struct tm t;
+    localtime_r(&tv->tv_sec, &t);
+    set_home_time(&guider_ui, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_wday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 void my_sntp_init(void) {
