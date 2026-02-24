@@ -168,7 +168,7 @@ static esp_err_t location_http_connect(void) {
             {
                     .url = url,
                     .event_handler = _weather_http_event_handler,
-                    .timeout_ms = 5000, // 设置为 10 秒
+                    .timeout_ms = 10000, // 设置为 10 秒
 
             };
     esp_http_client_handle_t client = esp_http_client_init(&config);
