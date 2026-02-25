@@ -1,22 +1,22 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include <stdio.h>
 #include "esp_spiffs.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "cJSON.h"
-#include <string.h>
-#include <driver/gpio.h>
 #include "button.h"
 #include "ap_wifi.h"
 #include "lv_port.h"
 #include "gui_guider.h"
 #include "custom.h"
 #include "esp_lvgl_port.h"
-#include <time.h>
 #include "esp_sntp.h"
 #include "weather.h"
-#include "ai.h"
+#include "ai_chat.h"
+#include <string.h>
+#include <stdio.h>
+#include <time.h>
+#include <driver/gpio.h>
 
 #define TAG     "main"
 lv_ui guider_ui;

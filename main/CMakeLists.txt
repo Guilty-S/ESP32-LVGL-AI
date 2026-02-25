@@ -7,7 +7,8 @@ idf_component_register(
         INCLUDE_DIRS ${INCLUDES}
         REQUIRES
         st7735
-        lsm6dsv16x
+        ai_chat
+        weather
         esp_timer
         lv_port
         lvgl

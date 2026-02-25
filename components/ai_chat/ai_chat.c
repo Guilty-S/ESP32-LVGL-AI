@@ -1,4 +1,4 @@
-#include "ai.h"
+#include "ai_chat.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_http_client.h"
