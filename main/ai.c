@@ -8,7 +8,10 @@
 #include "cJSON.h"
 #include <string.h>
 #include <stdio.h>
-
+static ai_stream_cb_t g_ai_stream_cb = NULL; // 保存界面的回调函数
+void ai_set_stream_callback(ai_stream_cb_t cb) {
+    g_ai_stream_cb = cb;
+}
 #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 你的 API Key
 #define AI_MODEL_NAME   "glm-4-flash"
@@ -33,7 +36,8 @@ static esp_err_t _ai_http_event_handler(esp_http_client_event_t *evt) {
                     if (strncmp(line_buffer, "data: ", 6) == 0) {
                         // 如果遇到结束标志，直接退出
                         if (strstr(line_buffer, "[DONE]")) {
-                            printf("\n"); // 换行收尾
+//                            printf("\n"); // 换行收尾
+                            if (g_ai_stream_cb) g_ai_stream_cb("\n");
                             break;
                         }
 
@@ -48,8 +52,11 @@ static esp_err_t _ai_http_event_handler(esp_http_client_event_t *evt) {
 
                                 // 如果解析到了字，立刻打印出来！
                                 if (content && content->valuestring) {
-                                    printf("%s", content->valuestring);
-                                    fflush(stdout); // 强制立刻输出到串口
+//                                    printf("%s", content->valuestring);
+//                                    fflush(stdout); // 强制立刻输出到串口
+                                    if (g_ai_stream_cb) {
+                                        g_ai_stream_cb(content->valuestring);
+                                    }
                                 }
                             }
                             cJSON_Delete(root);
@@ -133,7 +140,7 @@ esp_err_t ai_chat_request(const char *prompt) {
 
 // 独立的 AI 测试任务
 static void ai_test_task(void *param) {
-    const char *my_question = "你好，请用一段话介绍一下你自己，字数越多越好。"; // 故意让它多说点测试流式速度
+    const char *my_question = "你好，请用一段话介绍一下你自己(英文)"; // 故意让它多说点测试流式速度
 
     ESP_LOGI(TAG_AI, "Me: %s", my_question);
 

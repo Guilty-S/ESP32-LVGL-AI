@@ -1,7 +1,9 @@
 set(INCLUDES "." "./ui/generated" "./ui/custom" "./ui/generated/guider_customer_fonts" )
 file(GLOB_RECURSE SOURCES ./*.c)
+file(GLOB_RECURSE UI_SOURCES "ui/generated/*.c")
 idf_component_register(
         SRCS ${SOURCES}
+             ${UI_SOURCES}
         INCLUDE_DIRS ${INCLUDES}
         REQUIRES
         st7735

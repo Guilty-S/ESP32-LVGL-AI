@@ -19,24 +19,9 @@ extern "C" {
 typedef struct
 {
   
-	lv_obj_t *screen_home;
-	bool screen_home_del;
-	lv_obj_t *screen_home_label_big;
-	lv_obj_t *screen_home_label_1;
-	lv_obj_t *screen_home_label_2;
-	lv_obj_t *screen_home_label_3;
-	lv_obj_t *screen_home_label_4;
-	lv_obj_t *screen_home_label_5;
-	lv_obj_t *screen_home_label_6;
-	lv_obj_t *screen_home_label_7;
-	lv_obj_t *screen_home_label_8;
-	lv_obj_t *screen_home_img_lsm;
-	lv_obj_t *screen_led;
-	bool screen_led_del;
-	lv_obj_t *screen_led_ta_1;
-	lv_obj_t *screen_led_btn_1;
-	lv_obj_t *screen_led_btn_1_label;
-	lv_obj_t *g_kb_top_layer;
+	lv_obj_t *screen;
+	bool screen_del;
+	lv_obj_t *screen_screen_label_1;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);
@@ -64,16 +49,10 @@ void init_keyboard(lv_ui *ui);
 extern lv_ui guider_ui;
 
 
-void setup_scr_screen_home(lv_ui *ui);
-void setup_scr_screen_led(lv_ui *ui);
-LV_IMAGE_DECLARE(_lsm_RGB565A8_41x32);
+void setup_scr_screen(lv_ui *ui);
 
-LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_20)
-LV_FONT_DECLARE(lv_font_montserratMedium_16)
-LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_10)
+LV_FONT_DECLARE(lv_font_montserratMedium_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
-LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_16)
-LV_FONT_DECLARE(lv_font_SourceHanSerifSC_Regular_18)
 
 
 #ifdef __cplusplus

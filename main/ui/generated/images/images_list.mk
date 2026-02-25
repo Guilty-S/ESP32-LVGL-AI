@@ -1,1 +1,0 @@
-GEN_CSRCS += _lsm_RGB565A8_41x32.c
