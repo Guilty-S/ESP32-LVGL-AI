@@ -79,10 +79,10 @@ static void keypad_read(lv_indev_t * indev, lv_indev_data_t * data)
 
     if(gpio_get_level(BTN_PREV_IO) == 0) {
         data->state = LV_INDEV_STATE_PR;
-        last_key = is_editing ? LV_KEY_LEFT : LV_KEY_PREV;
+        last_key = LV_KEY_PREV;
     } else if(gpio_get_level(BTN_NEXT_IO) == 0) {
         data->state = LV_INDEV_STATE_PR;
-        last_key = is_editing ? LV_KEY_RIGHT : LV_KEY_NEXT;
+        last_key = LV_KEY_NEXT;
     } else if(gpio_get_level(BTN_ENTER_IO) == 0) {
         data->state = LV_INDEV_STATE_PR;
         last_key = LV_KEY_ENTER;
