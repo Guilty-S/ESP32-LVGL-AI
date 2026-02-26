@@ -8,9 +8,14 @@
 #include <string.h>
 #include <stdio.h>
 static weather_update_cb_t g_weather_ui_cb = NULL; // 存放回调函数的指针
+static local_update_cb_t g_local_ui_cb = NULL; // 存放回调函数的指针
+
 // 实现设置回调的函数
 void weather_set_ui_callback(weather_update_cb_t cb) {
     g_weather_ui_cb = cb;
+}
+void local_set_ui_callback(local_update_cb_t cb) {
+    g_local_ui_cb = cb;
 }
 
 #define WEATHER_BUFF_LEN 2048
@@ -99,14 +104,22 @@ static esp_err_t pasre_weather(const char *weather_data) {
                 sscanf(cJSON_GetStringValue(high_js), "%d", &data[index].high_temp);
                 sscanf(cJSON_GetStringValue(low_js), "%d", &data[index].low_temp);
                 snprintf(data[index].code, sizeof(data[index].code), "%s", cJSON_GetStringValue(code_js));
+                
+                // 【修改这里】：将路径生成和UI回调移到循环内部，并在 index++ 之前执行
+                char img_path[32];
+                snprintf(img_path, sizeof(img_path), "A:/img/%s@1x.png", data[index].code);
+                if (g_weather_ui_cb) {
+                    g_weather_ui_cb(index, img_path, data[index].low_temp, data[index].high_temp);
+                }
+                char* city_name_for_ui = city; // 直接用上面解析到的 city 变量
+                if (g_local_ui_cb) {
+                    g_local_ui_cb(city_name_for_ui);
+                }
                 index++;
                 daily_child_js = daily_child_js->next;
+            } else { 
+                break; // 超过3天就退出循环
             }
-        }
-        char img_path[32];
-        snprintf(img_path, sizeof(img_path), "/img/%s@1x.png", data[index].code);
-        if (g_weather_ui_cb) {
-                g_weather_ui_cb(index, img_path, data[index].low_temp, data[index].high_temp);
         }
     }
     cJSON_Delete(wj_js);

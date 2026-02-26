@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <driver/gpio.h>
-
 #define TAG     "main"
 
 static void img_spiffs_init(void)
@@ -165,6 +164,15 @@ void wifi_state_handle(WIFI_STATE state) {
 
 void app_main(void) {
     img_spiffs_init();
+    // --- 加入这段测试代码 ---
+    FILE* f = fopen("/img/0@1x.png", "r");
+    if (f == NULL) {
+        ESP_LOGE("FS_TEST", "Failed to open file! SPIFFS might be empty.");
+    } else {
+        ESP_LOGI("FS_TEST", "Successfully opened file! SPIFFS is correct.");
+        fclose(f);
+    }
+    // -------------------------
     lv_port_init();
     if (lvgl_port_lock(portMAX_DELAY)) {
         setup_ui(&guider_ui);
@@ -181,6 +189,7 @@ void app_main(void) {
     setenv("TZ", "CST-8", 1);
     tzset();
     weather_set_ui_callback(update_weather_ui_bridge);
+    local_set_ui_callback(update_local_ui_bridge);
     weather_start();
 
     // while(1) 被你注释掉了，这没关系，FreeRTOS 的任务会继续在后台运行
