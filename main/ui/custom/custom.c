@@ -1,45 +1,119 @@
 #include "custom.h"
+#include "ai_chat.h"
+/* 初始状态设为 false（收起） */
+static bool is_expanded = false;
+static const ai_config_t configs[] = {
+    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "Hi! I am Claude 3.5."},
+    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am ChatGPT."},
+    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am GLM-4."},
+    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "Hi! I am Qwen."},
+};
+/* --------------------------------------------------------
+ *  [核心修改]：精确控制顺序和焦点跳转
+ * -------------------------------------------------------- */
+static void set_children_focusable(bool focusable)
+{
+    // 获取当前主按钮所在的组
+    lv_group_t * g = lv_obj_get_group(guider_ui.screen_btn_4);
+    if(g == NULL) return;
 
-/* 定义一个静态变量来记录当前的展开/收起状态。
- * 假设你的 UI 刚加载时是展开的，这里默认为 true。如果是收起的则改为 false */
-static bool is_expanded = true;
+    if(focusable) {
+        /* 展开时：按照你想要的顺序 [1 -> 2 -> 3 -> 5] 依次加入组 */
+        /* LVGL 组遵循先入先出原则，后加入的会在导航顺序的后面 */
+        lv_group_add_obj(g, guider_ui.screen_btn_1);
+        lv_group_add_obj(g, guider_ui.screen_btn_2);
+        lv_group_add_obj(g, guider_ui.screen_btn_3);
+        lv_group_add_obj(g, guider_ui.screen_btn_5);
+
+        // 允许触摸点击聚焦（可选）
+        lv_obj_add_flag(guider_ui.screen_btn_1, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_add_flag(guider_ui.screen_btn_2, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_add_flag(guider_ui.screen_btn_3, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_add_flag(guider_ui.screen_btn_5, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+
+        /* 【关键一步】：强制将焦点从 btn_4 跳转到 btn_1 */
+        lv_group_focus_obj(guider_ui.screen_btn_1);
+
+    } else {
+        /* 收起时：将所有子按钮移除组 */
+        lv_group_remove_obj(guider_ui.screen_btn_1);
+        lv_group_remove_obj(guider_ui.screen_btn_2);
+        lv_group_remove_obj(guider_ui.screen_btn_3);
+        lv_group_remove_obj(guider_ui.screen_btn_5);
+
+        lv_obj_clear_flag(guider_ui.screen_btn_1, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_clear_flag(guider_ui.screen_btn_2, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_clear_flag(guider_ui.screen_btn_3, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        lv_obj_clear_flag(guider_ui.screen_btn_5, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+        
+        /* 焦点会自动回到 btn_4 (因为它是组里剩下的合法对象) */
+    }
+}
 
 /* --------------------------------------------------------
- *  动画执行回调函数：负责实时更新宽度和内部按钮的透明度
+ *  动画执行回调函数 (保持不变，但建议确认 max_width 足够大以容纳 4 个按钮)
  * -------------------------------------------------------- */
 static void cont_1_anim_cb(void * var, int32_t v)
 {
     lv_obj_t * obj = var;
     int32_t w;
 
-    // 【关键修改点 1】：修改你的最大和最小宽度！
-    // 假设你的 cont_1 收起时宽度为 0，完全展开时宽度为 120 (请根据GUI Guider实际像素修改)
     int32_t min_width = 0;   
-    int32_t max_width = 100; 
+    int32_t max_width = 120; // 【注意】：加了 btn_5，宽度可能需要从 130 改大到 160 左右
 
-    // lv_map 的作用是将 0~256 的动画值等比例映射到 min_width ~ max_width
     w = lv_map(v, 0, 256, min_width, max_width);
     lv_obj_set_width(obj, w);
 
-    // 【可选】：处理缩放方向
-    // LVGL默认改变宽度是从右向左缩（左上角X坐标固定）。
-    // 因为你的 btn_4 在右侧，如果你希望 cont_1 是“向右侧收缩”进 btn_4 里，
-    // 你需要同时动态改变X坐标。假设 cont_1 展开时的起始 X 坐标是 20：
-    // lv_obj_set_x(obj, 20 + (max_width - w)); 
-    // （如果不需要这个效果或你在UI里已经用了对齐锚点，请忽略这行）
-
-    // 限制透明度最大值为 255 (LV_OPA_COVER)
     if(v > LV_OPA_COVER) v = LV_OPA_COVER;
 
-    // 遍历修改 cont_1 内部的所有子对象（btn_1, btn_2, btn_3）的透明度
-    uint32_t i;
-    for(i = 0; i < lv_obj_get_child_count(obj); i++) {
-        lv_obj_set_style_opa(lv_obj_get_child(obj, i), v, 0);
+    // 内部透明度渐变
+    lv_obj_set_style_opa(guider_ui.screen_btn_1, v, 0);
+    lv_obj_set_style_opa(guider_ui.screen_btn_2, v, 0);
+    lv_obj_set_style_opa(guider_ui.screen_btn_3, v, 0);
+    lv_obj_set_style_opa(guider_ui.screen_btn_5, v, 0);
+}
+
+/* --------------------------------------------------------
+ *  子按钮点击事件回调
+ * -------------------------------------------------------- */
+void child_btn_event_cb(lv_event_t * e)
+{
+    if(lv_event_get_code(e) == LV_EVENT_CLICKED) {
+        lv_obj_t * clicked_btn = lv_event_get_target(e);
+        int model_index = 0;
+        // 判断点击的是哪个按钮，并确定对应的配置索引
+        if (clicked_btn == guider_ui.screen_btn_1) model_index = 1;
+        else if (clicked_btn == guider_ui.screen_btn_2) model_index = 0;
+        else if (clicked_btn == guider_ui.screen_btn_3) model_index = 2;
+        else if (clicked_btn == guider_ui.screen_btn_5) model_index = 3;
+        ai_chat_set_config(configs[model_index]);
+        lv_textarea_set_text(guider_ui.screen_label_answer, configs[model_index].welcome_msg);
+
+
+        const void * bg_img = lv_obj_get_style_bg_img_src(clicked_btn, LV_PART_MAIN);
+        if (bg_img != NULL) {
+            lv_obj_set_style_bg_img_src(guider_ui.screen_btn_4, bg_img, LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+
+        if(is_expanded) {
+            set_children_focusable(false); // 收起并移除焦点
+
+            lv_anim_t a;
+            lv_anim_init(&a);
+            lv_anim_set_var(&a, guider_ui.screen_cont_1); 
+            lv_anim_set_exec_cb(&a, cont_1_anim_cb);
+            lv_anim_set_time(&a, 200);
+            lv_anim_set_values(&a, 256, 0); 
+            lv_anim_start(&a);
+            
+            is_expanded = false;
+            lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);
+        }
     }
 }
 
 /* --------------------------------------------------------
- *  按钮点击事件回调：负责触发动画
+ *  主按钮 (btn_4) 点击事件回调
  * -------------------------------------------------------- */
 void btn_4_event_cb(lv_event_t * e)
 {
@@ -47,34 +121,63 @@ void btn_4_event_cb(lv_event_t * e)
         lv_anim_t a;
         lv_anim_init(&a);
         
-        // 设置动画的目标对象为你的容器 cont_1
         lv_anim_set_var(&a, guider_ui.screen_cont_1); 
         lv_anim_set_exec_cb(&a, cont_1_anim_cb);
-        
-        // 动画持续时间，200毫秒
         lv_anim_set_time(&a, 200);
 
         if(!is_expanded) {
-            // 当前是收起状态 -> 执行展开动画 (透明度/映射值从 0 变到 256)
+            set_children_focusable(true); // 展开并跳转焦点到 btn_1
             lv_anim_set_values(&a, 0, 256);
             is_expanded = true;
+            lv_obj_add_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);//防遮挡
         } else {
-            // 当前是展开状态 -> 执行收起动画 (透明度/映射值从 256 变到 0)
+            set_children_focusable(false); // 收起并移除焦点
             lv_anim_set_values(&a, 256, 0);
             is_expanded = false;
+            lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);//恢复
         }
         
-        // 启动动画
         lv_anim_start(&a);
     }
 }
 
 /* --------------------------------------------------------
- *  初始化绑定函数：将点击事件绑定给 btn_4
+ *  初始化
  * -------------------------------------------------------- */
 void custom_init(lv_ui *ui)
 {
-    /* 手动绑定 btn_4 的点击事件 */
-    /* 注：请确保屏幕初始化后调用了 custom_init(&guider_ui) */
+    /* 1. 初始隐藏容器 */
+    lv_obj_set_width(ui->screen_cont_1, 0);
+    // 初始设置所有子项透明度为 0
+    lv_obj_set_style_opa(ui->screen_btn_1, 0, 0);
+    lv_obj_set_style_opa(ui->screen_btn_2, 0, 0);
+    lv_obj_set_style_opa(ui->screen_btn_3, 0, 0);
+    lv_obj_set_style_opa(ui->screen_btn_5, 0, 0);
+    
+    is_expanded = false;
+    // 1. 禁用滑动条
+    lv_obj_set_scrollbar_mode(ui->screen_label_ask, LV_SCROLLBAR_MODE_OFF);
+    // 2. 踢出焦点组，防止按键误入
+    lv_group_t * g = lv_obj_get_group(ui->screen_label_ask);
+    if (g) lv_group_remove_obj(ui->screen_label_ask);
+        // 3. 禁止点击获取焦点
+    lv_obj_clear_flag(ui->screen_label_ask, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+    lv_textarea_set_text(ui->screen_label_ask, "Choose a question.");
+
+    /* 禁止 Textarea 参与焦点游走 */
+    lv_group_t * g_ta = lv_obj_get_group(ui->screen_label_answer);
+    if (g_ta != NULL) {
+        lv_group_remove_obj(ui->screen_label_answer);
+    }
+    lv_obj_clear_flag(ui->screen_label_answer, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+
+    /* 3. 绑定事件 (确保包含了 btn_5) */
     lv_obj_add_event_cb(ui->screen_btn_4, btn_4_event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui->screen_btn_1, child_btn_event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui->screen_btn_2, child_btn_event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui->screen_btn_3, child_btn_event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(ui->screen_btn_5, child_btn_event_cb, LV_EVENT_CLICKED, NULL);
+
+    // 初始状态下确保子按钮不在组内
+    set_children_focusable(false);
 }

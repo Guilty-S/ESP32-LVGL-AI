@@ -8,8 +8,8 @@ idf_component_register(
         REQUIRES
         st7735
         ai_chat
-        weather
-        esp_timer
+        weather 
+        esp_timer  
         lv_port
         lvgl
         nvs_flash

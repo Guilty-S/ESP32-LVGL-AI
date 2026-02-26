@@ -8,21 +8,36 @@
 #include "cJSON.h"
 #include <string.h>
 #include <stdio.h>
+// #define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
+// #define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // claude
+// #define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 暂时代替chatgpt
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // glm
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // qwen
+// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
+
+static const char *TAG_AI = "ai_chat";
+static ai_config_t current_conf = {
+    .name = "Claude",
+    .url = "http://1.95.142.151:3000/v1/chat/completions",
+    .key = "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe",
+    .model = "claude-3-5-sonnet-20240620",
+    .welcome_msg = "Hi! I am Claude 3.5."
+};
+
+void ai_chat_set_config(ai_config_t conf) {
+    current_conf = conf;
+}
 static ai_stream_cb_t g_ai_stream_cb = NULL; // 保存界面的回调函数
 void ai_set_stream_callback(ai_stream_cb_t cb) {
     g_ai_stream_cb = cb;
 }
-#define AI_API_URL "http://1.95.142.151:3000/v1/chat/completions"
-#define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // 你的 API Key
-#define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
-// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // 你的 API Key
-// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
-//#define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-//#define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 你的 API Key
-//#define AI_MODEL_NAME   "glm-4-flash"
 
-static const char *TAG_AI = "ai_chat";
 
 // 行缓冲区，用于拼接流式输出被截断的数据包
 static char line_buffer[2048];
@@ -34,7 +49,7 @@ static esp_err_t _ai_http_event_handler(esp_http_client_event_t *evt) {
         case HTTP_EVENT_ON_DATA: {
             // 服务器每次发来一个片段，可能包含多个字符或者不完整的行
             for (int i = 0; i < evt->data_len; i++) {
-                char c = ((char*)evt->data)[i];
+                char c = ((char *) evt->data)[i];
                 if (c == '\n') {
                     line_buffer[line_len] = '\0'; // 形成完整的一行
 
@@ -89,7 +104,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     esp_err_t err = ESP_FAIL;
 
     cJSON *root = cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "model", AI_MODEL_NAME);
+    cJSON_AddStringToObject(root, "model", current_conf.model);
 
     // 【核心秘诀】：告诉 AI 开启流式输出！
     cJSON_AddBoolToObject(root, "stream", true);
@@ -105,7 +120,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     cJSON_Delete(root);
 
     esp_http_client_config_t config = {
-            .url = AI_API_URL,
+            .url = current_conf.url,
             .event_handler = _ai_http_event_handler,
             .timeout_ms = 30000,
             .crt_bundle_attach = esp_crt_bundle_attach,
@@ -116,7 +131,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
     char auth_header[128];
-    snprintf(auth_header, sizeof(auth_header), "Bearer %s", AI_API_KEY);
+    snprintf(auth_header, sizeof(auth_header), "Bearer %s", current_conf.key);
     esp_http_client_set_header(client, "Authorization", auth_header);
 
     // 强制关闭 HTTP Keep-Alive，有助于提升单次流式请求的稳定性
@@ -146,7 +161,7 @@ esp_err_t ai_chat_request(const char *prompt) {
 
 // 独立的 AI 测试任务
 static void ai_test_task(void *param) {
-    const char *my_question = "你好，请用一段话介绍一下你自己(英文)"; // 故意让它多说点测试流式速度
+    const char *my_question = "你是什么模型？50字介绍(英文)"; // 故意让它多说点测试流式速度
 
     ESP_LOGI(TAG_AI, "Me: %s", my_question);
 
@@ -156,6 +171,30 @@ static void ai_test_task(void *param) {
     vTaskDelete(NULL);
 }
 
+// 内部任务函数
+static void ai_task_entry(void *param) {
+    char *prompt = (char *)param; // 接收传进来的字符串
+    
+    ESP_LOGI(TAG_AI, "AI Task Started with prompt: %s", prompt);
+    ai_chat_request(prompt);
+
+    free(prompt);  // 重要：释放 strdup 分配的内存
+    vTaskDelete(NULL); // 任务结束，销毁自己
+}
+
+// 供外部调用的启动函数
+void ai_chat_start_with_prompt(const char *current_prompt) {
+    if (current_prompt == NULL || strlen(current_prompt) == 0) {
+        ESP_LOGW(TAG_AI, "Prompt is empty, ignore.");
+        return;
+    }
+
+    // 重要：必须拷贝字符串！因为 current_prompt 来自 UI 缓存，随时会变
+    char *prompt_copy = strdup(current_prompt); 
+    
+    // 创建任务，将拷贝的字符串作为参数传入
+    xTaskCreatePinnedToCore(ai_task_entry, "ai_task", 8192, prompt_copy, 3, NULL, 1);
+}
 void ai_chat_start(void) {
-    xTaskCreatePinnedToCore(ai_test_task, "ai_task", 8192, NULL, 3, NULL, 1);
+    ai_chat_start_with_prompt("Introduce yourself.");
 }
