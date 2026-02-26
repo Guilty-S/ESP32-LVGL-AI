@@ -3,33 +3,6 @@
 #include "esp_lvgl_port.h"
 
 
-extern int screen_digital_clock_1_min_value;
-extern int screen_digital_clock_1_hour_value;
-extern int screen_digital_clock_1_sec_value;
-
-int screen_home_label_big_year_value;
-int screen_home_label_big_month_value;
-int screen_home_label_big_day_value;
-int screen_home_label_big_w_day_value;
-
-void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour, int min, int sec) {
-    screen_digital_clock_1_hour_value = hour;
-    screen_digital_clock_1_min_value = min;
-    screen_digital_clock_1_sec_value = sec;
-    screen_home_label_big_year_value = year;
-    screen_home_label_big_month_value = month;
-    screen_home_label_big_day_value = day;
-    screen_home_label_big_w_day_value = w_day;
-    char text[64];
-    snprintf(text, sizeof(text), "%04d年%02d月%02d日", year, month, day);
-    char week_text[64];
-    static const char* week_days_text[] = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
-    snprintf(week_text, sizeof(week_text), "%s", week_days_text[screen_home_label_big_w_day_value]);
-    lvgl_port_lock(0);
-    lv_label_set_text(ui->screen_label_day, text);
-    lv_label_set_text(ui->screen_label_w_day, week_text);
-    lvgl_port_unlock();
-}
 /* 初始状态设为 false（收起） */
 static bool is_expanded = false;
 static const ai_config_t configs[] = {
@@ -210,4 +183,47 @@ void custom_init(lv_ui *ui)
 
     // 初始状态下确保子按钮不在组内
     set_children_focusable(false);
+}
+
+extern int screen_digital_clock_1_min_value;
+extern int screen_digital_clock_1_hour_value;
+extern int screen_digital_clock_1_sec_value;
+
+int screen_home_label_big_year_value;
+int screen_home_label_big_month_value;
+int screen_home_label_big_day_value;
+int screen_home_label_big_w_day_value;
+
+void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour, int min, int sec) {
+    screen_digital_clock_1_hour_value = hour;
+    screen_digital_clock_1_min_value = min;
+    screen_digital_clock_1_sec_value = sec;
+    screen_home_label_big_year_value = year;
+    screen_home_label_big_month_value = month;
+    screen_home_label_big_day_value = day;
+    screen_home_label_big_w_day_value = w_day;
+    char text[64];
+    snprintf(text, sizeof(text), "%04d年%02d月%02d日", year, month, day);
+    char week_text[64];
+    static const char* week_days_text[] = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+    snprintf(week_text, sizeof(week_text), "%s", week_days_text[screen_home_label_big_w_day_value]);
+    lvgl_port_lock(0);
+    lv_label_set_text(ui->screen_label_day, text);
+    lv_label_set_text(ui->screen_label_w_day, week_text);
+    lvgl_port_unlock();
+}
+void set_today_img(lv_ui* ui, const char* img_path,int low,int high),
+{
+    char temp_text[32];
+    lvgl_port_lock(0);
+    snprintf(temp_text, "Low: %d", low);
+    lvgl_port_unlock();
+}
+void set_tomorrow_img(lv_ui* ui, const char* img_path,int low,int high)
+{
+
+}
+void set_after_img(lv_ui* ui, const char* img_path,int low,int high)
+{
+
 }
