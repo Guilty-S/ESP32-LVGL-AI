@@ -10,7 +10,7 @@ idf_component_register(
         ai_chat
         weather 
         esp_timer  
-        lv_port
+        lv_port   
         lvgl
         nvs_flash
         ap_wifi
