@@ -15,7 +15,7 @@ static void cont_1_anim_cb(void * var, int32_t v)
     // 【关键修改点 1】：修改你的最大和最小宽度！
     // 假设你的 cont_1 收起时宽度为 0，完全展开时宽度为 120 (请根据GUI Guider实际像素修改)
     int32_t min_width = 0;   
-    int32_t max_width = 80; 
+    int32_t max_width = 100; 
 
     // lv_map 的作用是将 0~256 的动画值等比例映射到 min_width ~ max_width
     w = lv_map(v, 0, 256, min_width, max_width);

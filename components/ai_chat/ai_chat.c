@@ -12,9 +12,15 @@ static ai_stream_cb_t g_ai_stream_cb = NULL; // 保存界面的回调函数
 void ai_set_stream_callback(ai_stream_cb_t cb) {
     g_ai_stream_cb = cb;
 }
-#define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-#define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 你的 API Key
-#define AI_MODEL_NAME   "glm-4-flash"
+#define AI_API_URL "http://1.95.142.151:3000/v1/chat/completions"
+#define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // 你的 API Key
+#define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
+// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // 你的 API Key
+// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
+//#define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+//#define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 你的 API Key
+//#define AI_MODEL_NAME   "glm-4-flash"
 
 static const char *TAG_AI = "ai_chat";
 
