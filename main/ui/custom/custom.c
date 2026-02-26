@@ -6,10 +6,10 @@
 /* 初始状态设为 false（收起） */
 static bool is_expanded = false;
 static const ai_config_t configs[] = {
-    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "Hi! I am Claude 3.5."},
-    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am ChatGPT."},
-    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am GLM-4."},
-    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "Hi! I am Qwen."},
+    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "你好,我是Claude."},
+    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "你好,我是ChatGPT."},
+    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "你好,我是GLM-4."},
+    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "你好,我是Qwen."},
 };
 /* --------------------------------------------------------
  *  [核心修改]：精确控制顺序和焦点跳转
@@ -165,7 +165,7 @@ void custom_init(lv_ui *ui)
     if (g) lv_group_remove_obj(ui->screen_label_ask);
         // 3. 禁止点击获取焦点
     lv_obj_clear_flag(ui->screen_label_ask, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-    lv_textarea_set_text(ui->screen_label_ask, "Choose a question.");
+    lv_textarea_set_text(ui->screen_label_ask, "请选择问题.");
 
     /* 禁止 Textarea 参与焦点游走 */
     lv_group_t * g_ta = lv_obj_get_group(ui->screen_label_answer);

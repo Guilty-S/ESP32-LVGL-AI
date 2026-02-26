@@ -521,7 +521,7 @@ void setup_scr_screen(lv_ui *ui)
     ui->screen_label_answer = lv_textarea_create(ui->screen_change_tab_2);
     lv_obj_set_pos(ui->screen_label_answer, -10, 13);
     lv_obj_set_size(ui->screen_label_answer, 121, 76);
-    lv_textarea_set_text(ui->screen_label_answer, "Switch AI Claude");
+    lv_textarea_set_text(ui->screen_label_answer, "请选择AI助手");
     lv_textarea_set_placeholder_text(ui->screen_label_answer, "");
     lv_textarea_set_password_bullet(ui->screen_label_answer, "*");
     lv_textarea_set_password_mode(ui->screen_label_answer, false);
@@ -534,7 +534,7 @@ void setup_scr_screen(lv_ui *ui)
 
     //Write style for screen_label_answer, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
     lv_obj_set_style_text_color(ui->screen_label_answer, lv_color_hex(0x000000), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->screen_label_answer, &lv_font_montserratMedium_10, LV_PART_MAIN|LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui->screen_label_answer, &lv_customer_font_ZiTiQuanWeiJunHeiW22_10, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui->screen_label_answer, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_letter_space(ui->screen_label_answer, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui->screen_label_answer, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN|LV_STATE_DEFAULT);
@@ -571,7 +571,7 @@ void setup_scr_screen(lv_ui *ui)
 
     //Write style for screen_label_ask, Part: LV_PART_MAIN, State: LV_STATE_DEFAULT.
     lv_obj_set_style_text_color(ui->screen_label_ask, lv_color_hex(0x000000), LV_PART_MAIN|LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui->screen_label_ask, &lv_font_montserratMedium_10, LV_PART_MAIN|LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui->screen_label_ask, &lv_customer_font_ZiTiQuanWeiJunHeiW22_10, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui->screen_label_ask, 255, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_letter_space(ui->screen_label_ask, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
     lv_obj_set_style_text_align(ui->screen_label_ask, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN|LV_STATE_DEFAULT);

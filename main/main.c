@@ -68,11 +68,11 @@ static int ai_buf_pos = 0;
  }
 // 1. 定义预设问题库
 static const char* my_questions[] = {
-    "Introduce yourself.",
-    "Tell a short joke about AI.",
-    "Explain what is ESP32",
-    "About the moon.",
-    "About LVGL?"
+    "你是什么模型.",
+    "讲一个故事.",
+    "解释一下ESP32.",
+    "关于月球.",
+    "关于LVGL?"
 };
 static int question_idx = 0;
 
@@ -89,18 +89,42 @@ void switch_question_press(int gpio) {
     ESP_LOGI(TAG, "Switched to Question: %s", my_questions[question_idx]);
 }
 
-// 3. 原有的短按回调（GPIO 33）：负责发送当前 label_ask 里的文字
+// 原有的短按回调（GPIO 33）：负责拼接要求并发送
 void short_press(int gpio) {
     if (lvgl_port_lock(portMAX_DELAY)) {
-        // 获取当前屏幕上显示的问题文字
-        const char* current_prompt = lv_textarea_get_text(guider_ui.screen_label_ask);
+        // 1. 获取当前屏幕上显示的问题文字 (注意：这是只读的)
+        const char* original_prompt = lv_textarea_get_text(guider_ui.screen_label_ask);
         
-        // 清空回答区域，准备显示
+        // 2. 清空回答区域，准备显示
         lv_textarea_set_text(guider_ui.screen_label_answer, "");
-        lvgl_port_unlock();
         
-        // 启动 AI（这里调用你带参数的启动函数）
-        ai_chat_start_with_prompt(current_prompt); 
+        // ================= 新增拼接逻辑 =================
+        // 定义你要追加的提示词
+        const char* append_str = "，请控制在60字以内。";
+        
+        // 计算需要的内存大小：原字符串长度 + 追加字符串长度 + 1 (结束符 '\0')
+        size_t needed_size = strlen(original_prompt) + strlen(append_str) + 1;
+        
+        // 动态分配一块新内存用来存拼接后的完整句子
+        char* combined_prompt = (char*)malloc(needed_size);
+        
+        if (combined_prompt != NULL) {
+            // 用 sprintf 将两者拼接到 combined_prompt 中
+            sprintf(combined_prompt, "%s%s", original_prompt, append_str);
+            
+            // 3. 启动 AI（把拼接好的新字符串传进去）
+            ai_chat_start_with_prompt(combined_prompt); 
+            
+            // 4. 发送完毕后，释放我们刚刚申请的内存
+            // (因为你的 ai_chat_start_with_prompt 内部有 strdup 拷贝，所以这里安全释放)
+            free(combined_prompt);
+        } else {
+            ESP_LOGE(TAG, "Malloc failed for combined prompt!");
+        }
+        // ==============================================
+        
+        // 5. 操作完毕，解锁 LVGL
+        lvgl_port_unlock();
     }
 }
 
