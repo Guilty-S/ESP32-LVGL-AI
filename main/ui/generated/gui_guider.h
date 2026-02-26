@@ -25,6 +25,8 @@ typedef struct
 	lv_obj_t *screen_tabview_1_tab_1;
 	lv_obj_t *screen_tabview_1_tab_2;
 	lv_obj_t *screen_cont_1;
+	lv_obj_t *screen_btn_5;
+	lv_obj_t *screen_btn_5_label;
 	lv_obj_t *screen_btn_3;
 	lv_obj_t *screen_btn_3_label;
 	lv_obj_t *screen_btn_2;
@@ -63,13 +65,13 @@ extern lv_ui guider_ui;
 
 void setup_scr_screen(lv_ui *ui);
 
-LV_IMAGE_DECLARE(_zhipu_RGB565A8_20x20);
-
-LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
-
 LV_IMAGE_DECLARE(_qwen_RGB565A8_20x20);
 
-LV_IMAGE_DECLARE(_claude_ai_RGB565A8_20x20);
+LV_IMAGE_DECLARE(_zhipu_RGB565A8_20x20);
+
+LV_IMAGE_DECLARE(_claude_RGB565A8_20x20);
+
+LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
 
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)

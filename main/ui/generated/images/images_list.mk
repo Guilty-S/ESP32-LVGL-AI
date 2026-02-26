@@ -1,1 +1,1 @@
-GEN_CSRCS += _zhipu_RGB565A8_20x20.c _chatgpt_RGB565A8_20x20.c _qwen_RGB565A8_20x20.c _claude_ai_RGB565A8_20x20.c
+GEN_CSRCS += _qwen_RGB565A8_20x20.c _zhipu_RGB565A8_20x20.c _claude_RGB565A8_20x20.c _chatgpt_RGB565A8_20x20.c
