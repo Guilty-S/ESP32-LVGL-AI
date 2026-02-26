@@ -123,7 +123,7 @@ void button_init(void) {
 static void sntp_finish_callback(struct timeval *tv) {
     struct tm t;
     localtime_r(&tv->tv_sec, &t);
-//    set_home_time(&guider_ui, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_wday, t.tm_hour, t.tm_min, t.tm_sec);
+   set_home_time(&guider_ui, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_wday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 void my_sntp_init(void) {
@@ -160,13 +160,13 @@ void app_main(void) {
         lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
         lvgl_port_unlock();
     }
-     ai_set_stream_callback(my_ai_stream_cb);
+    ai_set_stream_callback(my_ai_stream_cb);
     ESP_ERROR_CHECK(nvs_flash_init());
-     button_init();
+    button_init();
     ap_wifi_init(wifi_state_handle);
-//    setenv("TZ", "CST-8", 1);
-//    tzset();
-//    weather_start();
+    setenv("TZ", "CST-8", 1);
+    tzset();
+    weather_start();
 
     // while(1) 被你注释掉了，这没关系，FreeRTOS 的任务会继续在后台运行
 }

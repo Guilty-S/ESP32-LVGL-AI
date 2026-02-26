@@ -13,7 +13,7 @@ idf_component_register(
         lv_port   
         lvgl
         nvs_flash
-        ap_wifi
+        ap_wifi 
         esp_lvgl_port
         esp_http_client
         mbedtls

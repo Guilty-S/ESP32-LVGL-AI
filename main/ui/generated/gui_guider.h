@@ -24,10 +24,10 @@ typedef struct
 	lv_obj_t *screen_change;
 	lv_obj_t *screen_change_tab_1;
 	lv_obj_t *screen_change_tab_2;
-	lv_obj_t *screen_label_1;
-	lv_obj_t *screen_label_2;
+	lv_obj_t *screen_label_day;
+	lv_obj_t *screen_label_local;
 	lv_obj_t *screen_digital_clock_1;
-	lv_obj_t *screen_label_3;
+	lv_obj_t *screen_label_w_day;
 	lv_obj_t *screen_cont_1;
 	lv_obj_t *screen_btn_5;
 	lv_obj_t *screen_btn_5_label;
@@ -79,9 +79,10 @@ LV_IMAGE_DECLARE(_claude_RGB565A8_20x20);
 LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
 
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
-LV_FONT_DECLARE(lv_font_montserratMedium_10)
+LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
-LV_FONT_DECLARE(lv_font_montserratMedium_19)
+LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_19)
+LV_FONT_DECLARE(lv_font_montserratMedium_10)
 
 
 #ifdef __cplusplus
