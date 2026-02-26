@@ -212,18 +212,36 @@ void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour,
     lv_label_set_text(ui->screen_label_w_day, week_text);
     lvgl_port_unlock();
 }
-void set_today_img(lv_ui* ui, const char* img_path,int low,int high),
+void set_today_img(lv_ui* ui, const char* img_path,int low,int high)
 {
     char temp_text[32];
     lvgl_port_lock(0);
-    snprintf(temp_text, "Low: %d", low);
+    lv_img_set_src(ui->screen_img_today, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_today, temp_text);
     lvgl_port_unlock();
 }
 void set_tomorrow_img(lv_ui* ui, const char* img_path,int low,int high)
 {
-
+    char temp_text[32];
+    lvgl_port_lock(0);
+    lv_img_set_src(ui->screen_img_tom, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_tom, temp_text);
+    lvgl_port_unlock();
 }
 void set_after_img(lv_ui* ui, const char* img_path,int low,int high)
 {
-
+    char temp_text[32];
+    lvgl_port_lock(0);
+    lv_img_set_src(ui->screen_img_after, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_after, temp_text);
+    lvgl_port_unlock();
+}
+void update_weather_ui_bridge(int day, const char* img_path, int low, int high) {
+    // 根据天数调用你原来的函数
+    if (day == 0) set_today_img(&guider_ui, img_path, low, high);
+    else if (day == 1) set_tomorrow_img(&guider_ui, img_path, low, high);
+    else if (day == 2) set_after_img(&guider_ui, img_path, low, high);
 }

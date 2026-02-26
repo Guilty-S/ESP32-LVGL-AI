@@ -7,6 +7,11 @@
 #include "wifi_manager.h"
 #include <string.h>
 #include <stdio.h>
+static weather_update_cb_t g_weather_ui_cb = NULL; // 存放回调函数的指针
+// 实现设置回调的函数
+void weather_set_ui_callback(weather_update_cb_t cb) {
+    g_weather_ui_cb = cb;
+}
 
 #define WEATHER_BUFF_LEN 2048
 #define WEATHER_PRIVATE_KEY "SETYVdDsalvhmIpVf"
@@ -97,6 +102,11 @@ static esp_err_t pasre_weather(const char *weather_data) {
                 index++;
                 daily_child_js = daily_child_js->next;
             }
+        }
+        char img_path[32];
+        snprintf(img_path, sizeof(img_path), "/img/%s@1x.png", data[index].code);
+        if (g_weather_ui_cb) {
+                g_weather_ui_cb(index, img_path, data[index].low_temp, data[index].high_temp);
         }
     }
     cJSON_Delete(wj_js);

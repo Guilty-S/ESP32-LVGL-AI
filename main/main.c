@@ -180,6 +180,7 @@ void app_main(void) {
     ap_wifi_init(wifi_state_handle);
     setenv("TZ", "CST-8", 1);
     tzset();
+    weather_set_ui_callback(update_weather_ui_bridge);
     weather_start();
 
     // while(1) 被你注释掉了，这没关系，FreeRTOS 的任务会继续在后台运行
