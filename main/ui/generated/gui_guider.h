@@ -33,6 +33,7 @@ typedef struct
 	lv_obj_t *screen_btn_1_label;
 	lv_obj_t *screen_btn_4;
 	lv_obj_t *screen_btn_4_label;
+	lv_obj_t *screen_label_answer;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);
@@ -62,8 +63,17 @@ extern lv_ui guider_ui;
 
 void setup_scr_screen(lv_ui *ui);
 
+LV_IMAGE_DECLARE(_zhipu_RGB565A8_20x20);
+
+LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
+
+LV_IMAGE_DECLARE(_qwen_RGB565A8_20x20);
+
+LV_IMAGE_DECLARE(_claude_ai_RGB565A8_20x20);
+
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
+LV_FONT_DECLARE(lv_font_montserratMedium_10)
 
 
 #ifdef __cplusplus
