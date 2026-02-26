@@ -17,8 +17,20 @@
 #include <stdio.h>
 #include <time.h>
 #include <driver/gpio.h>
-
 #define TAG     "main"
+
+static void img_spiffs_init(void)
+{
+    //定义挂载点
+    esp_vfs_spiffs_conf_t conf = {
+        .base_path = "/img",            //挂载点
+        .partition_label = "img",         //分区名称
+        .max_files = 5,                    //最大打开的文件数
+        .format_if_mount_failed = false    //挂载失败是否执行格式化
+        };
+    //挂载spiffs
+    ESP_ERROR_CHECK(esp_vfs_spiffs_register(&conf));
+}
 lv_ui guider_ui;
 static char ai_buffer[512];
 static int ai_buf_pos = 0;
@@ -56,11 +68,11 @@ static int ai_buf_pos = 0;
  }
 // 1. 定义预设问题库
 static const char* my_questions[] = {
-    "Introduce yourself.",
-    "Tell a short joke about AI.",
-    "Explain what is ESP32",
-    "About the moon.",
-    "About LVGL?"
+    "你是什么模型.",
+    "讲一个故事.",
+    "解释一下ESP32.",
+    "关于月球.",
+    "关于LVGL?"
 };
 static int question_idx = 0;
 
@@ -77,18 +89,42 @@ void switch_question_press(int gpio) {
     ESP_LOGI(TAG, "Switched to Question: %s", my_questions[question_idx]);
 }
 
-// 3. 原有的短按回调（GPIO 33）：负责发送当前 label_ask 里的文字
+// 原有的短按回调（GPIO 33）：负责拼接要求并发送
 void short_press(int gpio) {
     if (lvgl_port_lock(portMAX_DELAY)) {
-        // 获取当前屏幕上显示的问题文字
-        const char* current_prompt = lv_textarea_get_text(guider_ui.screen_label_ask);
+        // 1. 获取当前屏幕上显示的问题文字 (注意：这是只读的)
+        const char* original_prompt = lv_textarea_get_text(guider_ui.screen_label_ask);
         
-        // 清空回答区域，准备显示
+        // 2. 清空回答区域，准备显示
         lv_textarea_set_text(guider_ui.screen_label_answer, "");
-        lvgl_port_unlock();
         
-        // 启动 AI（这里调用你带参数的启动函数）
-        ai_chat_start_with_prompt(current_prompt); 
+        // ================= 新增拼接逻辑 =================
+        // 定义你要追加的提示词
+        const char* append_str = "，请控制在60字以内。";
+        
+        // 计算需要的内存大小：原字符串长度 + 追加字符串长度 + 1 (结束符 '\0')
+        size_t needed_size = strlen(original_prompt) + strlen(append_str) + 1;
+        
+        // 动态分配一块新内存用来存拼接后的完整句子
+        char* combined_prompt = (char*)malloc(needed_size);
+        
+        if (combined_prompt != NULL) {
+            // 用 sprintf 将两者拼接到 combined_prompt 中
+            sprintf(combined_prompt, "%s%s", original_prompt, append_str);
+            
+            // 3. 启动 AI（把拼接好的新字符串传进去）
+            ai_chat_start_with_prompt(combined_prompt); 
+            
+            // 4. 发送完毕后，释放我们刚刚申请的内存
+            // (因为你的 ai_chat_start_with_prompt 内部有 strdup 拷贝，所以这里安全释放)
+            free(combined_prompt);
+        } else {
+            ESP_LOGE(TAG, "Malloc failed for combined prompt!");
+        }
+        // ==============================================
+        
+        // 5. 操作完毕，解锁 LVGL
+        lvgl_port_unlock();
     }
 }
 
@@ -123,7 +159,7 @@ void button_init(void) {
 static void sntp_finish_callback(struct timeval *tv) {
     struct tm t;
     localtime_r(&tv->tv_sec, &t);
-//    set_home_time(&guider_ui, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_wday, t.tm_hour, t.tm_min, t.tm_sec);
+   set_home_time(&guider_ui, t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_wday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
 void my_sntp_init(void) {
@@ -151,6 +187,16 @@ void wifi_state_handle(WIFI_STATE state) {
 }
 
 void app_main(void) {
+    img_spiffs_init();
+    // --- 加入这段测试代码 ---
+    FILE* f = fopen("/img/0@1x.png", "r");
+    if (f == NULL) {
+        ESP_LOGE("FS_TEST", "Failed to open file! SPIFFS might be empty.");
+    } else {
+        ESP_LOGI("FS_TEST", "Successfully opened file! SPIFFS is correct.");
+        fclose(f);
+    }
+    // -------------------------
     lv_port_init();
     if (lvgl_port_lock(portMAX_DELAY)) {
         setup_ui(&guider_ui);
@@ -160,13 +206,15 @@ void app_main(void) {
         lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
         lvgl_port_unlock();
     }
-     ai_set_stream_callback(my_ai_stream_cb);
+    ai_set_stream_callback(my_ai_stream_cb);
     ESP_ERROR_CHECK(nvs_flash_init());
-     button_init();
+    button_init();
     ap_wifi_init(wifi_state_handle);
-//    setenv("TZ", "CST-8", 1);
-//    tzset();
-//    weather_start();
+    setenv("TZ", "CST-8", 1);
+    tzset();
+    weather_set_ui_callback(update_weather_ui_bridge);
+    local_set_ui_callback(update_local_ui_bridge);
+    weather_start();
 
     // while(1) 被你注释掉了，这没关系，FreeRTOS 的任务会继续在后台运行
 }

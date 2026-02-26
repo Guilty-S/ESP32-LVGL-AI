@@ -34,7 +34,13 @@ void child_btn_event_cb(lv_event_t * e);
  * @brief 主按钮（展开/收起按钮 btn_4）的事件回调
  */
 void btn_4_event_cb(lv_event_t * e);
-
+void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour, int min, int sec);
+void set_today_img(lv_ui* ui, const char* img_path,int low,int high);
+void set_tomorrow_img(lv_ui* ui, const char* img_path,int low,int high);
+void set_after_img(lv_ui* ui, const char* img_path,int low,int high);
+void update_weather_ui_bridge(int day, const char* img_path, int low, int high);
+void set_home_city(lv_ui *ui, const char* city_name);
+void update_local_ui_bridge(const char* city_name);
 #ifdef __cplusplus
 } /* extern "C" */
 #endif

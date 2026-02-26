@@ -24,6 +24,19 @@ typedef struct
 	lv_obj_t *screen_change;
 	lv_obj_t *screen_change_tab_1;
 	lv_obj_t *screen_change_tab_2;
+	lv_obj_t *screen_label_day;
+	lv_obj_t *screen_label_local;
+	lv_obj_t *screen_digital_clock_1;
+	lv_obj_t *screen_label_w_day;
+	lv_obj_t *screen_label_1;
+	lv_obj_t *screen_label_2;
+	lv_obj_t *screen_label_4;
+	lv_obj_t *screen_label_today;
+	lv_obj_t *screen_label_after;
+	lv_obj_t *screen_label_tom;
+	lv_obj_t *screen_img_after;
+	lv_obj_t *screen_img_tom;
+	lv_obj_t *screen_img_today;
 	lv_obj_t *screen_cont_1;
 	lv_obj_t *screen_btn_5;
 	lv_obj_t *screen_btn_5_label;
@@ -65,6 +78,9 @@ extern lv_ui guider_ui;
 
 
 void setup_scr_screen(lv_ui *ui);
+LV_IMAGE_DECLARE(_5_RGB565A8_30x31);
+LV_IMAGE_DECLARE(_4_RGB565A8_30x31);
+LV_IMAGE_DECLARE(_3_RGB565A8_30x31);
 
 LV_IMAGE_DECLARE(_qwen_RGB565A8_20x20);
 
@@ -75,8 +91,11 @@ LV_IMAGE_DECLARE(_claude_RGB565A8_20x20);
 LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
 
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
+LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
+LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_18)
 LV_FONT_DECLARE(lv_font_montserratMedium_10)
+LV_FONT_DECLARE(lv_customer_font_ZiTiQuanWeiJunHeiW22_10)
 
 
 #ifdef __cplusplus

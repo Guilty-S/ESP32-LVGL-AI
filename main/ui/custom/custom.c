@@ -1,12 +1,15 @@
 #include "custom.h"
 #include "ai_chat.h"
+#include "esp_lvgl_port.h"
+
+
 /* 初始状态设为 false（收起） */
 static bool is_expanded = false;
 static const ai_config_t configs[] = {
-    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "Hi! I am Claude 3.5."},
-    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am ChatGPT."},
-    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am GLM-4."},
-    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "Hi! I am Qwen."},
+    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "你好,我是Claude."},
+    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "你好,我是ChatGPT."},
+    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "你好,我是GLM-4."},
+    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "你好,我是Qwen."},
 };
 /* --------------------------------------------------------
  *  [核心修改]：精确控制顺序和焦点跳转
@@ -162,7 +165,7 @@ void custom_init(lv_ui *ui)
     if (g) lv_group_remove_obj(ui->screen_label_ask);
         // 3. 禁止点击获取焦点
     lv_obj_clear_flag(ui->screen_label_ask, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-    lv_textarea_set_text(ui->screen_label_ask, "Choose a question.");
+    lv_textarea_set_text(ui->screen_label_ask, "请选择问题.");
 
     /* 禁止 Textarea 参与焦点游走 */
     lv_group_t * g_ta = lv_obj_get_group(ui->screen_label_answer);
@@ -180,4 +183,75 @@ void custom_init(lv_ui *ui)
 
     // 初始状态下确保子按钮不在组内
     set_children_focusable(false);
+}
+
+extern int screen_digital_clock_1_min_value;
+extern int screen_digital_clock_1_hour_value;
+extern int screen_digital_clock_1_sec_value;
+
+int screen_home_label_big_year_value;
+int screen_home_label_big_month_value;
+int screen_home_label_big_day_value;
+int screen_home_label_big_w_day_value;
+
+void set_home_time(lv_ui *ui, int year, int month, int day, int w_day, int hour, int min, int sec) {
+    screen_digital_clock_1_hour_value = hour;
+    screen_digital_clock_1_min_value = min;
+    screen_digital_clock_1_sec_value = sec;
+    screen_home_label_big_year_value = year;
+    screen_home_label_big_month_value = month;
+    screen_home_label_big_day_value = day;
+    screen_home_label_big_w_day_value = w_day;
+    char text[64];
+    snprintf(text, sizeof(text), "%04d年%02d月%02d日", year, month, day);
+    char week_text[64];
+    static const char* week_days_text[] = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+    snprintf(week_text, sizeof(week_text), "%s", week_days_text[screen_home_label_big_w_day_value]);
+    lvgl_port_lock(portMAX_DELAY);
+    lv_label_set_text(ui->screen_label_day, text);
+    lv_label_set_text(ui->screen_label_w_day, week_text);
+    lvgl_port_unlock();
+}
+void set_today_img(lv_ui* ui, const char* img_path,int low,int high)
+{
+    char temp_text[32];
+    lvgl_port_lock(0);
+    lv_img_set_src(ui->screen_img_today, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_today, temp_text);
+    lvgl_port_unlock();
+}
+void set_tomorrow_img(lv_ui* ui, const char* img_path,int low,int high)
+{
+    char temp_text[32];
+    lvgl_port_lock(0);
+    lv_img_set_src(ui->screen_img_tom, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_tom, temp_text);
+    lvgl_port_unlock();
+}
+void set_after_img(lv_ui* ui, const char* img_path,int low,int high)
+{
+    char temp_text[32];
+    lvgl_port_lock(0);
+    lv_img_set_src(ui->screen_img_after, img_path);
+    snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
+    lv_label_set_text(ui->screen_label_after, temp_text);
+    lvgl_port_unlock();
+}
+void update_weather_ui_bridge(int day, const char* img_path, int low, int high) {
+    // 根据天数调用你原来的函数
+    if (day == 0) set_today_img(&guider_ui, img_path, low, high);
+    else if (day == 1) set_tomorrow_img(&guider_ui, img_path, low, high);
+    else if (day == 2) set_after_img(&guider_ui, img_path, low, high);
+}
+void set_home_city(lv_ui *ui, const char* city_name) {
+    char city_text[32];
+    lvgl_port_lock(0);
+    snprintf(city_text,sizeof(city_text),"%s", city_name);
+    lv_label_set_text(ui->screen_label_local, city_text);
+    lvgl_port_unlock();
+}
+void update_local_ui_bridge(const char* city_name) {
+    set_home_city(&guider_ui, city_name);
 }

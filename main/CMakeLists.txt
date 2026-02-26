@@ -10,13 +10,14 @@ idf_component_register(
         ai_chat
         weather 
         esp_timer  
-        lv_port
+        lv_port   
         lvgl
         nvs_flash
-        ap_wifi
+        ap_wifi 
         esp_lvgl_port
-        esp_http_client
-        mbedtls
-        esp-tls
-)
+        esp_http_client 
+        mbedtls 
+        esp-tls 
+) 
 spiffs_create_partition_image(html ../html FLASH_IN_PROJECT)
+spiffs_create_partition_image(img ../img FLASH_IN_PROJECT)
