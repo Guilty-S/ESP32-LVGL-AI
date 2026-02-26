@@ -93,8 +93,9 @@ LV_IMAGE_DECLARE(_chatgpt_RGB565A8_20x20);
 LV_FONT_DECLARE(lv_font_montserratMedium_12)
 LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_10)
 LV_FONT_DECLARE(lv_font_montserratMedium_16)
-LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_19)
+LV_FONT_DECLARE(lv_font_ZiTiQuanWeiJunHeiW22_18)
 LV_FONT_DECLARE(lv_font_montserratMedium_10)
+LV_FONT_DECLARE(lv_customer_font_ZiTiQuanWeiJunHeiW22_10)
 
 
 #ifdef __cplusplus

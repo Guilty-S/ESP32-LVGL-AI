@@ -38,6 +38,9 @@
 // void set_today_img(lv_ui* ui, const char* img_path,int low,int high);
 // void set_tomorrow_img(lv_ui* ui, const char* img_path,int low,int high);
 // void set_after_img(lv_ui* ui, const char* img_path,int low,int high);
+// void update_weather_ui_bridge(int day, const char* img_path, int low, int high);
+// void set_home_city(lv_ui *ui, const char* city_name);
+// void update_local_ui_bridge(const char* city_name);
 // #ifdef __cplusplus
 // } /* extern "C" */
 // #endif

@@ -207,12 +207,12 @@
 //     char week_text[64];
 //     static const char* week_days_text[] = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
 //     snprintf(week_text, sizeof(week_text), "%s", week_days_text[screen_home_label_big_w_day_value]);
-//     lvgl_port_lock(0);
+//     lvgl_port_lock(portMAX_DELAY);
 //     lv_label_set_text(ui->screen_label_day, text);
 //     lv_label_set_text(ui->screen_label_w_day, week_text);
 //     lvgl_port_unlock();
 // }
-// void set_today_img(lv_ui* ui, const char* img_path,int low,int high),
+// void set_today_img(lv_ui* ui, const char* img_path,int low,int high)
 // {
 //     char temp_text[32];
 //     lvgl_port_lock(0);
@@ -238,4 +238,20 @@
 //     snprintf(temp_text, sizeof(temp_text), "%d-%d℃", low, high);
 //     lv_label_set_text(ui->screen_label_after, temp_text);
 //     lvgl_port_unlock();
+// }
+// void update_weather_ui_bridge(int day, const char* img_path, int low, int high) {
+//     // 根据天数调用你原来的函数
+//     if (day == 0) set_today_img(&guider_ui, img_path, low, high);
+//     else if (day == 1) set_tomorrow_img(&guider_ui, img_path, low, high);
+//     else if (day == 2) set_after_img(&guider_ui, img_path, low, high);
+// }
+// void set_home_city(lv_ui *ui, const char* city_name) {
+//     char city_text[32];
+//     lvgl_port_lock(0);
+//     snprintf(city_text,sizeof(city_text),"%s", city_name);
+//     lv_label_set_text(ui->screen_label_local, city_text);
+//     lvgl_port_unlock();
+// }
+// void update_local_ui_bridge(const char* city_name) {
+//     set_home_city(&guider_ui, city_name);
 // }
