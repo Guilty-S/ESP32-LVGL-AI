@@ -171,6 +171,30 @@ static void ai_test_task(void *param) {
     vTaskDelete(NULL);
 }
 
+// 内部任务函数
+static void ai_task_entry(void *param) {
+    char *prompt = (char *)param; // 接收传进来的字符串
+    
+    ESP_LOGI(TAG_AI, "AI Task Started with prompt: %s", prompt);
+    ai_chat_request(prompt);
+
+    free(prompt);  // 重要：释放 strdup 分配的内存
+    vTaskDelete(NULL); // 任务结束，销毁自己
+}
+
+// 供外部调用的启动函数
+void ai_chat_start_with_prompt(const char *current_prompt) {
+    if (current_prompt == NULL || strlen(current_prompt) == 0) {
+        ESP_LOGW(TAG_AI, "Prompt is empty, ignore.");
+        return;
+    }
+
+    // 重要：必须拷贝字符串！因为 current_prompt 来自 UI 缓存，随时会变
+    char *prompt_copy = strdup(current_prompt); 
+    
+    // 创建任务，将拷贝的字符串作为参数传入
+    xTaskCreatePinnedToCore(ai_task_entry, "ai_task", 8192, prompt_copy, 3, NULL, 1);
+}
 void ai_chat_start(void) {
-    xTaskCreatePinnedToCore(ai_test_task, "ai_task", 8192, NULL, 3, NULL, 1);
+    ai_chat_start_with_prompt("Introduce yourself.");
 }

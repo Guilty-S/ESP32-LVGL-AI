@@ -54,24 +54,47 @@ static int ai_buf_pos = 0;
  void long_press(int gpio) {
      ap_wifi_apcfg(true);
  }
+// 1. 定义预设问题库
+static const char* my_questions[] = {
+    "Introduce yourself in 50 words (English).",
+    "Tell a short joke about AI.",
+    "Explain what is ESP32 in one sentence.",
+    "Write a 4-line poem about the moon.",
+    "What is the latest version of LVGL?"
+};
+static int question_idx = 0;
 
- // 【修改】：按键短按回调，按下时不仅要启动AI，还要清空屏幕上一次的对话
- void short_press(int gpio) {
-     ESP_LOGI(TAG, "Button short pressed! Starting AI chat...");
+// 2. 新按键的回调：仅负责切换并显示问题
+void switch_question_press(int gpio) {
+    question_idx = (question_idx + 1) % 5; // 5个问题循环
+    
+    if (lvgl_port_lock(portMAX_DELAY)) {
+        // 在新增加的 textarea (或label) 上显示当前选中的问题
+        // 假设你在 GUI Guider 里的名字叫 label_ask
+        lv_textarea_set_text(guider_ui.screen_label_ask, my_questions[question_idx]);
+        lvgl_port_unlock();
+    }
+    ESP_LOGI(TAG, "Switched to Question: %s", my_questions[question_idx]);
+}
 
-     // 清空旧的文字内容 (同样需要加锁)
-     if (lvgl_port_lock(portMAX_DELAY)) {
-         lv_textarea_set_text(guider_ui.screen_label_answer, "");
+// 3. 原有的短按回调（GPIO 33）：负责发送当前 label_ask 里的文字
+void short_press(int gpio) {
+    if (lvgl_port_lock(portMAX_DELAY)) {
+        // 获取当前屏幕上显示的问题文字
+        const char* current_prompt = lv_textarea_get_text(guider_ui.screen_label_ask);
+        
+        // 清空回答区域，准备显示
+        lv_textarea_set_text(guider_ui.screen_label_answer, "");
+        lvgl_port_unlock();
+        
+        // 启动 AI（这里调用你带参数的启动函数）
+        ai_chat_start_with_prompt(current_prompt); 
+    }
+}
 
-         lvgl_port_unlock();
-     }
-
-     ai_chat_start();
- }
-
- void button_init(void) {
+void button_init(void) {
      gpio_config(&(gpio_config_t) {
-             .pin_bit_mask = (1ULL << 33),
+             .pin_bit_mask = (1ULL << 33)| (1ULL << 25),
              .mode = GPIO_MODE_INPUT,
              .pull_up_en = GPIO_PULLUP_ENABLE,
              .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -87,6 +110,14 @@ static int ai_buf_pos = 0;
                      .short_cb = short_press,
              };
      button_event_set(&button_cfg);
+    // 新增 GPIO 25 的按键配置 (用于切换任务)
+    button_config_t switch_btn_cfg = {
+        .active_level = 0,
+        .getlevel_cb = get_button_level,
+        .gpio_num = 25,  // <--- 你的新按键引脚
+        .short_cb = switch_question_press, // 绑定切换函数
+    };
+    button_event_set(&switch_btn_cfg);
  }
 
 static void sntp_finish_callback(struct timeval *tv) {
@@ -125,8 +156,8 @@ void app_main(void) {
         setup_ui(&guider_ui);
         custom_init(&guider_ui);
         lv_obj_set_style_text_line_space(guider_ui.screen_label_answer, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
-        lv_obj_set_scrollbar_mode(guider_ui.screen_tabview_1_tab_1, LV_SCROLLBAR_MODE_OFF);
-        lv_obj_set_scrollbar_mode(guider_ui.screen_tabview_1_tab_2, LV_SCROLLBAR_MODE_OFF);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
         lvgl_port_unlock();
     }
      ai_set_stream_callback(my_ai_stream_cb);

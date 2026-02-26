@@ -1,17 +1,5 @@
 #include "custom.h"
 #include "ai_chat.h"
-// #define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
-// #define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // claude
-// #define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
-// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 暂时代替chatgpt
-// #define AI_MODEL_NAME   "glm-4-flash"
-// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // glm
-// #define AI_MODEL_NAME   "glm-4-flash"
-// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // qwen
-// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
 /* 初始状态设为 false（收起） */
 static bool is_expanded = false;
 static const ai_config_t configs[] = {
@@ -164,8 +152,16 @@ void custom_init(lv_ui *ui)
     lv_obj_set_style_opa(ui->screen_btn_5, 0, 0);
     
     is_expanded = false;
+    // 1. 禁用滑动条
+    lv_obj_set_scrollbar_mode(ui->screen_label_ask, LV_SCROLLBAR_MODE_OFF);
+    // 2. 踢出焦点组，防止按键误入
+    lv_group_t * g = lv_obj_get_group(ui->screen_label_ask);
+    if (g) lv_group_remove_obj(ui->screen_label_ask);
+        // 3. 禁止点击获取焦点
+    lv_obj_clear_flag(ui->screen_label_ask, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+    lv_textarea_set_text(ui->screen_label_ask, "Press the NEW button to choose a question.");
 
-    /* 2. 禁止 Textarea 参与焦点游走 */
+    /* 禁止 Textarea 参与焦点游走 */
     lv_group_t * g_ta = lv_obj_get_group(ui->screen_label_answer);
     if (g_ta != NULL) {
         lv_group_remove_obj(ui->screen_label_answer);

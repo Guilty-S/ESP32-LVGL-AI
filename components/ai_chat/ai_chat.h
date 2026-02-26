@@ -1,5 +1,8 @@
-#ifndef _AI_H_
-#define _AI_H_
+#ifndef AI_CHAT_H   // 修改这里
+#define AI_CHAT_H   // 修改这里
+
+// ... 内容 ...
+
 
 #include "esp_err.h"
 typedef struct {
@@ -13,7 +16,7 @@ typedef struct {
 void ai_chat_set_config(ai_config_t conf);
 // 现有的函数声明保持不变...
 typedef void (*ai_stream_cb_t)(const char *fragment);
-
+void ai_chat_start_with_prompt(const char *current_prompt);
 void ai_set_stream_callback(ai_stream_cb_t cb);
 
 // 只需要传入你想说的话即可

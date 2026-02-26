@@ -21,9 +21,9 @@ typedef struct
   
 	lv_obj_t *screen;
 	bool screen_del;
-	lv_obj_t *screen_tabview_1;
-	lv_obj_t *screen_tabview_1_tab_1;
-	lv_obj_t *screen_tabview_1_tab_2;
+	lv_obj_t *screen_change;
+	lv_obj_t *screen_change_tab_1;
+	lv_obj_t *screen_change_tab_2;
 	lv_obj_t *screen_cont_1;
 	lv_obj_t *screen_btn_5;
 	lv_obj_t *screen_btn_5_label;
@@ -36,6 +36,7 @@ typedef struct
 	lv_obj_t *screen_btn_4;
 	lv_obj_t *screen_btn_4_label;
 	lv_obj_t *screen_label_answer;
+	lv_obj_t *screen_label_ask;
 }lv_ui;
 
 typedef void (*ui_setup_scr_t)(lv_ui * ui);
