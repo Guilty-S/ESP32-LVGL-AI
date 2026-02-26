@@ -125,6 +125,8 @@ void app_main(void) {
         setup_ui(&guider_ui);
         custom_init(&guider_ui);
         lv_obj_set_style_text_line_space(guider_ui.screen_label_answer, 0, LV_PART_MAIN|LV_STATE_DEFAULT);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_tabview_1_tab_1, LV_SCROLLBAR_MODE_OFF);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_tabview_1_tab_2, LV_SCROLLBAR_MODE_OFF);
         lvgl_port_unlock();
     }
      ai_set_stream_callback(my_ai_stream_cb);
