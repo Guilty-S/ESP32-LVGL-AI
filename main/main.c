@@ -19,6 +19,19 @@
 #include <driver/gpio.h>
 
 #define TAG     "main"
+
+static void img_spiffs_init(void)
+{
+    //定义挂载点
+    esp_vfs_spiffs_conf_t conf = {
+        .base_path = "/img",            //挂载点
+        .partition_label = "img",         //分区名称
+        .max_files = 5,                    //最大打开的文件数
+        .format_if_mount_failed = false    //挂载失败是否执行格式化
+        };
+    //挂载spiffs
+    ESP_ERROR_CHECK(esp_vfs_spiffs_register(&conf));
+}
 lv_ui guider_ui;
 static char ai_buffer[512];
 static int ai_buf_pos = 0;
@@ -151,6 +164,7 @@ void wifi_state_handle(WIFI_STATE state) {
 }
 
 void app_main(void) {
+    img_spiffs_init();
     lv_port_init();
     if (lvgl_port_lock(portMAX_DELAY)) {
         setup_ui(&guider_ui);
