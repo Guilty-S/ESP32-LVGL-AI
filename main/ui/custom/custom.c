@@ -107,6 +107,7 @@ void child_btn_event_cb(lv_event_t * e)
             lv_anim_start(&a);
             
             is_expanded = false;
+            lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);
         }
     }
 }
@@ -128,10 +129,12 @@ void btn_4_event_cb(lv_event_t * e)
             set_children_focusable(true); // 展开并跳转焦点到 btn_1
             lv_anim_set_values(&a, 0, 256);
             is_expanded = true;
+            lv_obj_add_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);//防遮挡
         } else {
             set_children_focusable(false); // 收起并移除焦点
             lv_anim_set_values(&a, 256, 0);
             is_expanded = false;
+            lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);//恢复
         }
         
         lv_anim_start(&a);
@@ -159,7 +162,7 @@ void custom_init(lv_ui *ui)
     if (g) lv_group_remove_obj(ui->screen_label_ask);
         // 3. 禁止点击获取焦点
     lv_obj_clear_flag(ui->screen_label_ask, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-    lv_textarea_set_text(ui->screen_label_ask, "Press the NEW button to choose a question.");
+    lv_textarea_set_text(ui->screen_label_ask, "Choose a question.");
 
     /* 禁止 Textarea 参与焦点游走 */
     lv_group_t * g_ta = lv_obj_get_group(ui->screen_label_answer);

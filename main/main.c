@@ -56,11 +56,11 @@ static int ai_buf_pos = 0;
  }
 // 1. 定义预设问题库
 static const char* my_questions[] = {
-    "Introduce yourself in 50 words (English).",
+    "Introduce yourself.",
     "Tell a short joke about AI.",
-    "Explain what is ESP32 in one sentence.",
-    "Write a 4-line poem about the moon.",
-    "What is the latest version of LVGL?"
+    "Explain what is ESP32",
+    "About the moon.",
+    "About LVGL?"
 };
 static int question_idx = 0;
 
