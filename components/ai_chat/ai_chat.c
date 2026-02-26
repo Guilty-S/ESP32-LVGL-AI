@@ -8,23 +8,36 @@
 #include "cJSON.h"
 #include <string.h>
 #include <stdio.h>
+// #define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
+// #define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // claude
+// #define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 暂时代替chatgpt
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // glm
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // qwen
+// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
 
+static const char *TAG_AI = "ai_chat";
+static ai_config_t current_conf = {
+    .name = "Claude",
+    .url = "http://1.95.142.151:3000/v1/chat/completions",
+    .key = "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe",
+    .model = "claude-3-5-sonnet-20240620",
+    .welcome_msg = "Hi! I am Claude 3.5."
+};
+
+void ai_chat_set_config(ai_config_t conf) {
+    current_conf = conf;
+}
 static ai_stream_cb_t g_ai_stream_cb = NULL; // 保存界面的回调函数
 void ai_set_stream_callback(ai_stream_cb_t cb) {
     g_ai_stream_cb = cb;
 }
 
-//#define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
-//#define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // 你的 API Key
-//#define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
-// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // 你的 API Key
-// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
-#define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
-#define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 你的 API Key
-#define AI_MODEL_NAME   "glm-4-flash"
-
-static const char *TAG_AI = "ai_chat";
 
 // 行缓冲区，用于拼接流式输出被截断的数据包
 static char line_buffer[2048];
@@ -91,7 +104,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     esp_err_t err = ESP_FAIL;
 
     cJSON *root = cJSON_CreateObject();
-    cJSON_AddStringToObject(root, "model", AI_MODEL_NAME);
+    cJSON_AddStringToObject(root, "model", current_conf.model);
 
     // 【核心秘诀】：告诉 AI 开启流式输出！
     cJSON_AddBoolToObject(root, "stream", true);
@@ -107,7 +120,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     cJSON_Delete(root);
 
     esp_http_client_config_t config = {
-            .url = AI_API_URL,
+            .url = current_conf.url,
             .event_handler = _ai_http_event_handler,
             .timeout_ms = 30000,
             .crt_bundle_attach = esp_crt_bundle_attach,
@@ -118,7 +131,7 @@ esp_err_t ai_chat_request(const char *prompt) {
     esp_http_client_set_header(client, "Content-Type", "application/json");
 
     char auth_header[128];
-    snprintf(auth_header, sizeof(auth_header), "Bearer %s", AI_API_KEY);
+    snprintf(auth_header, sizeof(auth_header), "Bearer %s", current_conf.key);
     esp_http_client_set_header(client, "Authorization", auth_header);
 
     // 强制关闭 HTTP Keep-Alive，有助于提升单次流式请求的稳定性

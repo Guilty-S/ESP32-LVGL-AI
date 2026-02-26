@@ -1,8 +1,25 @@
 #include "custom.h"
-
+#include "ai_chat.h"
+// #define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
+// #define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // claude
+// #define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // 暂时代替chatgpt
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+// #define AI_API_KEY      "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX" // glm
+// #define AI_MODEL_NAME   "glm-4-flash"
+// #define AI_API_URL      "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+// #define AI_API_KEY      "sk-68ff9e5765c44b46ace7aa21fa747812" // qwen
+// #define AI_MODEL_NAME   "qwen-flash-2025-07-28"
 /* 初始状态设为 false（收起） */
 static bool is_expanded = false;
-
+static const ai_config_t configs[] = {
+    {"Claude", "http://1.95.142.151:3000/v1/chat/completions", "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe", "claude-3-5-sonnet-20240620", "Hi! I am Claude 3.5."},
+    {"ChatGPT", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am ChatGPT."},
+    {"GLM", "https://open.bigmodel.cn/api/paas/v4/chat/completions", "2023c448090d4e039823d4ea20bdd2b2.MXBC7gD7HZ0UU8jX", "glm-4-flash", "Hi! I am GLM-4."},
+    {"Qwen", "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", "sk-68ff9e5765c44b46ace7aa21fa747812", "qwen-max", "Hi! I am Qwen."},
+};
 /* --------------------------------------------------------
  *  [核心修改]：精确控制顺序和焦点跳转
  * -------------------------------------------------------- */
@@ -75,6 +92,15 @@ void child_btn_event_cb(lv_event_t * e)
 {
     if(lv_event_get_code(e) == LV_EVENT_CLICKED) {
         lv_obj_t * clicked_btn = lv_event_get_target(e);
+        int model_index = 0;
+        // 判断点击的是哪个按钮，并确定对应的配置索引
+        if (clicked_btn == guider_ui.screen_btn_1) model_index = 1;
+        else if (clicked_btn == guider_ui.screen_btn_2) model_index = 0;
+        else if (clicked_btn == guider_ui.screen_btn_3) model_index = 2;
+        else if (clicked_btn == guider_ui.screen_btn_5) model_index = 3;
+        ai_chat_set_config(configs[model_index]);
+        lv_textarea_set_text(guider_ui.screen_label_answer, configs[model_index].welcome_msg);
+
 
         const void * bg_img = lv_obj_get_style_bg_img_src(clicked_btn, LV_PART_MAIN);
         if (bg_img != NULL) {
