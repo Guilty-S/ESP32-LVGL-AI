@@ -9,4 +9,5 @@
 
 extern lv_ui guider_ui;
 void button_init(void);
+void img_spiffs_init(void);
 #endif //ESP32_CLION_APP_CONTROL_H

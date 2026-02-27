@@ -190,6 +190,8 @@ void ap_wifi_apcfg(bool enable)
 void wifi_state_handle(WIFI_STATE state) {
     if (state == WIFI_STATE_CONNECTED) {
         my_sntp_init();
+        setenv("TZ", "CST-8", 1);
+        tzset();
         ESP_LOGI(TAG, "Wifi connected");
 
         // 【可选】如果你想连上WiFi后自动和AI说一句话，也可以在这里写：

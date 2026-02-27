@@ -184,17 +184,17 @@ void my_ai_stream_cb(const char *fragment) {
         ai_buffer[0] = '\0';
     }
 }
-// 独立的 AI 测试任务
-static void ai_test_task(void *param) {
-    const char *my_question = "你是什么模型？50字介绍(英文)"; // 故意让它多说点测试流式速度
-
-    ESP_LOGI(TAG_AI, "Me: %s", my_question);
-
-    // 调用请求函数，现在不需要 out_reply 缓冲区了，因为它会直接在底层实时打印
-    ai_chat_request(my_question);
-
-    vTaskDelete(NULL);
-}
+//// 独立的 AI 测试任务
+//static void ai_test_task(void *param) {
+//    const char *my_question = "你是什么模型？50字介绍(英文)"; // 故意让它多说点测试流式速度
+//
+//    ESP_LOGI(TAG_AI, "Me: %s", my_question);
+//
+//    // 调用请求函数，现在不需要 out_reply 缓冲区了，因为它会直接在底层实时打印
+//    ai_chat_request(my_question);
+//
+//    vTaskDelete(NULL);
+//}
 
 // 内部任务函数
 static void ai_task_entry(void *param) {

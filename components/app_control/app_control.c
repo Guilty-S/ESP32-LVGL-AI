@@ -3,6 +3,7 @@
 #include "ap_wifi.h"
 #include "ai_chat.h"
 #include <driver/gpio.h>
+#include <esp_spiffs.h>
 #include "esp_lvgl_port.h"
 #include "esp_log.h"
 #include "lvgl.h"
@@ -106,4 +107,15 @@ void button_init(void) {
     button_event_set(&switch_btn_cfg);
 }
 
+void img_spiffs_init(void) {
+    //定义挂载点
+    esp_vfs_spiffs_conf_t conf = {
+            .base_path = "/img",            //挂载点
+            .partition_label = "img",         //分区名称
+            .max_files = 5,                    //最大打开的文件数
+            .format_if_mount_failed = false    //挂载失败是否执行格式化
+    };
+    //挂载spiffs
+    ESP_ERROR_CHECK(esp_vfs_spiffs_register(&conf));
+}
 
