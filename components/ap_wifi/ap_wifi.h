@@ -1,5 +1,6 @@
 #ifndef _APCFG_H_
 #define _APCFG_H_
+
 #include "wifi_manager.h"
 
 /** wifi功能和ap配网功能初始化
@@ -13,12 +14,16 @@ void ap_wifi_init(p_wifi_state_callback f);
  * @param password
  * @return 无 
 */
-void ap_wifi_set(const char* ssid,const char* password);
+void ap_wifi_set(const char *ssid, const char *password);
 
 /** 启动配网模式
  * @param enable 暂无用，强制true
  * @return 无 
 */
 void ap_wifi_apcfg(bool enable);
+
+
+//事件
+void wifi_state_handle(WIFI_STATE state);
 
 #endif
