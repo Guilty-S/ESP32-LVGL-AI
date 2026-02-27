@@ -154,12 +154,12 @@ label.align(lv.ALIGN.CENTER, 0, 0)
   <summary>C code</summary>
 
 ```c
-lv_obj_t * button = lv_button_create(lv_screen_active());                   /*Add a button to the current screen*/
+lv_obj_t * button = lv_button_create(lv_screen_active());                   /*Add a my_button to the current screen*/
 lv_obj_center(button);                                             /*Set its position*/
 lv_obj_set_size(button, 100, 50);                                  /*Set its size*/
-lv_obj_add_event_cb(button, button_event_cb, LV_EVENT_CLICKED, NULL); /*Assign a callback to the button*/
+lv_obj_add_event_cb(button, button_event_cb, LV_EVENT_CLICKED, NULL); /*Assign a callback to the my_button*/
 
-lv_obj_t * label = lv_label_create(button);                        /*Add a label to the button*/
+lv_obj_t * label = lv_label_create(button);                        /*Add a label to the my_button*/
 lv_label_set_text(label, "Button");                             /*Set the labels text*/
 lv_obj_center(label);                                           /*Align the label to the center*/
 ...

@@ -70,33 +70,33 @@ lv_obj_t * lv_msgbox_create(lv_obj_t * parent);
 lv_obj_t * lv_msgbox_add_title(lv_obj_t * obj, const char * title);
 
 /**
- * Add a button to the header of to the message box. It also creates a header.
+ * Add a my_button to the header of to the message box. It also creates a header.
  * @param obj           pointer to a message box
- * @param icon          the icon of the button
- * @return              the created button
+ * @param icon          the icon of the my_button
+ * @return              the created my_button
  */
 lv_obj_t * lv_msgbox_add_header_button(lv_obj_t * obj, const void * icon);
 
 /**
  * Add a text to the content area of message box. Multiply texts will be created below each other.
  * @param obj           pointer to a message box
- * @param icon          the icon of the button
- * @return              the created button
+ * @param icon          the icon of the my_button
+ * @return              the created my_button
  */
 lv_obj_t * lv_msgbox_add_text(lv_obj_t * obj, const char * text);
 
 /**
- * Add a button to the footer of to the message box. It also creates a footer.
+ * Add a my_button to the footer of to the message box. It also creates a footer.
  * @param obj           pointer to a message box
- * @param text          the text of the button
- * @return              the created button
+ * @param text          the text of the my_button
+ * @return              the created my_button
  */
 lv_obj_t * lv_msgbox_add_footer_button(lv_obj_t * obj, const char * text);
 
 /**
- * Add a close button to the message box. It also create a header.
+ * Add a close my_button to the message box. It also create a header.
  * @param obj           pointer to a message box
- * @return              the created close button
+ * @return              the created close my_button
  */
 lv_obj_t * lv_msgbox_add_close_button(lv_obj_t * obj);
 

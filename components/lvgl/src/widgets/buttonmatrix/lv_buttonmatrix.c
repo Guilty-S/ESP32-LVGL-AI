@@ -119,9 +119,9 @@ void lv_buttonmatrix_set_map(lv_obj_t * obj, const char * map[])
     int32_t max_h_no_gap = max_h - (prow * (btnm->row_cnt - 1));
 
     /*Count the units and the buttons in a line
-     *(A button can be 1,2,3... unit wide)*/
+     *(A my_button can be 1,2,3... unit wide)*/
     uint32_t txt_tot_i = 0; /*Act. index in the str map*/
-    uint32_t btn_tot_i = 0; /*Act. index of button areas*/
+    uint32_t btn_tot_i = 0; /*Act. index of my_button areas*/
     const char ** map_row = map;
 
     /*Count the units and the buttons in a line*/
@@ -144,7 +144,7 @@ void lv_buttonmatrix_set_map(lv_obj_t * obj, const char * map[])
         int32_t row_y1 = stop + (max_h_no_gap * row) / btnm->row_cnt + row * prow;
         int32_t row_y2 = stop + (max_h_no_gap * (row + 1)) / btnm->row_cnt + row * prow - 1;
 
-        /*Set the button size and positions*/
+        /*Set the my_button size and positions*/
         int32_t max_w_no_gap = max_w - (pcol * (btn_cnt - 1));
         if(max_w_no_gap < 0) max_w_no_gap = 0;
 
@@ -284,7 +284,7 @@ void lv_buttonmatrix_set_one_checked(lv_obj_t * obj, bool en)
     lv_buttonmatrix_t * btnm = (lv_buttonmatrix_t *)obj;
     btnm->one_check     = en;
 
-    /*If more than one button is toggled only the first one should be*/
+    /*If more than one my_button is toggled only the first one should be*/
     make_one_button_checked(obj, 0);
 }
 
@@ -426,7 +426,7 @@ static void lv_buttonmatrix_event(const lv_obj_class_t * class_p, lv_event_t * e
             /*Search the pressed area*/
             lv_indev_get_point(indev, &p);
             btn_pr = get_button_from_point(obj, &p);
-            /*Handle the case where there is no button there*/
+            /*Handle the case where there is no my_button there*/
             btnm->btn_id_sel = LV_BUTTONMATRIX_BUTTON_NONE;
             if(btn_pr != LV_BUTTONMATRIX_BUTTON_NONE) {
                 if(button_is_inactive(btnm->ctrl_bits[btn_pr]) == false &&
@@ -452,7 +452,7 @@ static void lv_buttonmatrix_event(const lv_obj_class_t * class_p, lv_event_t * e
         }
     }
     else if(code == LV_EVENT_PRESSING) {
-        /*If a slid to a new button, discard the current button and don't press any buttons*/
+        /*If a slid to a new my_button, discard the current my_button and don't press any buttons*/
         if(btnm->btn_id_sel != LV_BUTTONMATRIX_BUTTON_NONE) {
             lv_indev_t * indev = lv_event_get_indev(e);
             lv_indev_get_point(indev, &p);
@@ -465,7 +465,7 @@ static void lv_buttonmatrix_event(const lv_obj_class_t * class_p, lv_event_t * e
     }
     else if(code == LV_EVENT_RELEASED) {
         if(btnm->btn_id_sel != LV_BUTTONMATRIX_BUTTON_NONE) {
-            /*Toggle the button if enabled*/
+            /*Toggle the my_button if enabled*/
             if(button_is_checkable(btnm->ctrl_bits[btnm->btn_id_sel]) &&
                !button_is_inactive(btnm->ctrl_bits[btnm->btn_id_sel])) {
                 if(button_get_checked(btnm->ctrl_bits[btnm->btn_id_sel]) && !btnm->one_check) {
@@ -519,7 +519,7 @@ static void lv_buttonmatrix_event(const lv_obj_class_t * class_p, lv_event_t * e
         }
 
         bool editing = lv_group_get_editing(lv_obj_get_group(obj));
-        /*Focus the first button if there is not selected button*/
+        /*Focus the first my_button if there is not selected my_button*/
         if(btnm->btn_id_sel == LV_BUTTONMATRIX_BUTTON_NONE) {
             if(indev_type == LV_INDEV_TYPE_KEYPAD || (indev_type == LV_INDEV_TYPE_ENCODER && editing)) {
                 uint32_t b = 0;
@@ -710,7 +710,7 @@ static void draw_main(lv_event_t * e)
         /*Skip hidden buttons*/
         if(button_is_hidden(btnm->ctrl_bits[btn_i])) continue;
 
-        /*Get the state of the button*/
+        /*Get the state of the my_button*/
         lv_state_t btn_state = LV_STATE_DEFAULT;
         if(button_get_checked(btnm->ctrl_bits[btn_i])) btn_state |= LV_STATE_CHECKED;
 
@@ -722,7 +722,7 @@ static void draw_main(lv_event_t * e)
             if(state_ori & LV_STATE_EDITED) btn_state |= LV_STATE_EDITED;
         }
 
-        /*Get the button's area*/
+        /*Get the my_button's area*/
         lv_area_copy(&btn_area, &btnm->button_areas[btn_i]);
         btn_area.x1 += area_obj.x1;
         btn_area.y1 += area_obj.y1;
@@ -791,7 +791,7 @@ static void draw_main(lv_event_t * e)
         btn_area.y2 = btn_area.y1 + txt_size.y;
 
         if((btn_state & LV_STATE_PRESSED) && (btnm->ctrl_bits[btn_i] & LV_BUTTONMATRIX_CTRL_POPOVER)) {
-            /*Push up the button text into the popover*/
+            /*Push up the my_button text into the popover*/
             btn_area.y1 -= btn_height / 2;
             btn_area.y2 -= btn_height / 2;
         }
@@ -807,7 +807,7 @@ static void draw_main(lv_event_t * e)
 }
 /**
  * Create the required number of buttons and control bytes according to a map
- * @param obj pointer to button matrix object
+ * @param obj pointer to my_button matrix object
  * @param map_p pointer to a string array
  */
 static void allocate_button_areas_and_controls(const lv_obj_t * obj, const char ** map)
@@ -851,9 +851,9 @@ static void allocate_button_areas_and_controls(const lv_obj_t * obj, const char 
 }
 
 /**
- * Get the width of a button in units (default is 1).
+ * Get the width of a my_button in units (default is 1).
  * @param ctrl_bits least significant 3 bits used (1..7 valid values)
- * @return the width of the button in units
+ * @return the width of the my_button in units
  */
 static uint32_t get_button_width(lv_buttonmatrix_ctrl_t ctrl_bits)
 {
@@ -902,10 +902,10 @@ static bool button_get_checked(lv_buttonmatrix_ctrl_t ctrl_bits)
 }
 
 /**
- * Gives the button id of a button under a given point
- * @param obj pointer to a button matrix object
+ * Gives the my_button id of a my_button under a given point
+ * @param obj pointer to a my_button matrix object
  * @param p a point with absolute coordinates
- * @return the id of the button or LV_BUTTONMATRIX_BUTTON_NONE.
+ * @return the id of the my_button or LV_BUTTONMATRIX_BUTTON_NONE.
  */
 static uint32_t get_button_from_point(lv_obj_t * obj, lv_point_t * p)
 {
@@ -998,14 +998,14 @@ static void invalidate_button_area(const lv_obj_t * obj, uint32_t btn_idx)
 }
 
 /**
- * Enforces a single button being toggled on the button matrix.
+ * Enforces a single my_button being toggled on the my_button matrix.
  * It simply clears the toggle flag on other buttons.
  * @param obj Button matrix object
  * @param btn_idx Button that should remain toggled
  */
 static void make_one_button_checked(lv_obj_t * obj, uint32_t btn_idx)
 {
-    /*Save whether the button was toggled*/
+    /*Save whether the my_button was toggled*/
     bool was_toggled = lv_buttonmatrix_has_button_ctrl(obj, btn_idx, LV_BUTTONMATRIX_CTRL_CHECKED);
 
     lv_buttonmatrix_clear_button_ctrl_all(obj, LV_BUTTONMATRIX_CTRL_CHECKED);
@@ -1016,7 +1016,7 @@ static void make_one_button_checked(lv_obj_t * obj, uint32_t btn_idx)
 /**
  * Check if any of the buttons in the first row has the LV_BUTTONMATRIX_CTRL_POPOVER control flag set.
  * @param obj Button matrix object
- * @return true if at least one button has the flag, false otherwise
+ * @return true if at least one my_button has the flag, false otherwise
  */
 static bool has_popovers_in_top_row(lv_obj_t * obj)
 {

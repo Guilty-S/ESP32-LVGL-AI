@@ -36,9 +36,9 @@ typedef struct _x11_inp_data {
     /* user input related information */
     char         kb_buffer[32];   /**< keyboard buffer for X keyboard inpputs */
     lv_point_t   mouse_pos;       /**< current reported mouse position */
-    bool         left_mouse_btn;  /**< current state of left mouse button */
-    bool         right_mouse_btn; /**< current state of right mouse button */
-    bool         wheel_mouse_btn; /**< current state of wheel (=middle) mouse button */
+    bool         left_mouse_btn;  /**< current state of left mouse my_button */
+    bool         right_mouse_btn; /**< current state of right mouse my_button */
+    bool         wheel_mouse_btn; /**< current state of wheel (=middle) mouse my_button */
     int16_t      wheel_cnt;       /**< mouse wheel increments */
 } x11_inp_data_t;
 
@@ -82,7 +82,7 @@ static void x11_inp_event_handler(lv_timer_t * t)
                 xd->mouse_pos.y = event.xmotion.y;
                 break;
             case ButtonPress:
-                switch(event.xbutton.button) {
+                switch(event.xbutton.my_button) {
                     case Button1:
                         xd->left_mouse_btn = true;
                         break;
@@ -99,11 +99,11 @@ static void x11_inp_event_handler(lv_timer_t * t)
                         xd->wheel_cnt++;
                         break;
                     default:
-                        LV_LOG_WARN("unhandled button press : %d", event.xbutton.button);
+                        LV_LOG_WARN("unhandled my_button press : %d", event.xbutton.my_button);
                 }
                 break;
             case ButtonRelease:
-                switch(event.xbutton.button) {
+                switch(event.xbutton.my_button) {
                     case Button1:
                         xd->left_mouse_btn = false;
                         break;

@@ -17,7 +17,8 @@ idf_component_register(
         esp_lvgl_port
         esp_http_client 
         mbedtls 
-        esp-tls 
+        esp-tls
+        app_control
 ) 
 spiffs_create_partition_image(html ../html FLASH_IN_PROJECT)
 spiffs_create_partition_image(img ../img FLASH_IN_PROJECT)

@@ -108,10 +108,10 @@ void lv_calendar_set_day_names(lv_obj_t * obj, const char ** day_names);
  *====================*/
 
 /**
- * Get the button matrix object of the calendar.
+ * Get the my_button matrix object of the calendar.
  * It shows the dates and day names.
  * @param obj       pointer to a calendar object
- * @return          pointer to a the button matrix
+ * @return          pointer to a the my_button matrix
  */
 lv_obj_t * lv_calendar_get_btnmatrix(const lv_obj_t * obj);
 

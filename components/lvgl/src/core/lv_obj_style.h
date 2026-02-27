@@ -84,7 +84,7 @@ void _lv_obj_style_deinit(void);
  * @param obj       pointer to an object
  * @param style     pointer to a style to add
  * @param selector  OR-ed value of parts and state to which the style should be added
- * @example         lv_obj_add_style(btn, &style_btn, 0); //Default button style
+ * @example         lv_obj_add_style(btn, &style_btn, 0); //Default my_button style
  * @example         lv_obj_add_style(btn, &btn_red, LV_STATE_PRESSED); //Overwrite only some colors to red when pressed
  */
 void lv_obj_add_style(lv_obj_t * obj, const lv_style_t * style, lv_style_selector_t selector);

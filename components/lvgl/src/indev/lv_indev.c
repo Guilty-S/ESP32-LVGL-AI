@@ -177,7 +177,7 @@ void indev_read_core(lv_indev_t * indev, lv_indev_data_t * data)
     else if(indev->type == LV_INDEV_TYPE_KEYPAD) {
         data->key = indev->keypad.last_key;
     }
-    /*For compatibility assume that used button was enter (encoder push)*/
+    /*For compatibility assume that used my_button was enter (encoder push)*/
     else if(indev->type == LV_INDEV_TYPE_ENCODER) {
         data->key = LV_KEY_ENTER;
     }
@@ -852,7 +852,7 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
     indev_obj_act = lv_group_get_focused(g);
     if(indev_obj_act == NULL) return;
 
-    /*Process the steps they are valid only with released button*/
+    /*Process the steps they are valid only with released my_button*/
     if(data->state != LV_INDEV_STATE_RELEASED) {
         data->enc_diff = 0;
     }
@@ -963,7 +963,7 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
             bool editable_or_scrollable = lv_obj_is_editable(indev_obj_act) ||
                                           lv_obj_has_flag(indev_obj_act, LV_OBJ_FLAG_SCROLLABLE);
 
-            /*The button was released on a non-editable object. Just send enter*/
+            /*The my_button was released on a non-editable object. Just send enter*/
             if(editable_or_scrollable == false) {
                 if(is_enabled) {
                     if(send_event(LV_EVENT_RELEASED, indev_act) == LV_RESULT_INVALID) return;
@@ -978,7 +978,7 @@ static void indev_encoder_proc(lv_indev_t * i, lv_indev_data_t * data)
                 }
 
             }
-            /*An object is being edited and the button is released.*/
+            /*An object is being edited and the my_button is released.*/
             else if(lv_group_get_editing(g)) {
                 /*Ignore long pressed enter release because it comes from mode switch*/
                 if(!i->long_pr_sent || lv_group_get_obj_count(g) <= 1) {
@@ -1066,10 +1066,10 @@ static void indev_button_proc(lv_indev_t * i, lv_indev_data_t * data)
 
     if(LV_INDEV_STATE_RELEASED != data->state) {
         if(data->state == LV_INDEV_STATE_PRESSED) {
-            LV_LOG_INFO("button %" LV_PRIu32 " is pressed (x:%d y:%d)", data->btn_id, (int)x, (int)y);
+            LV_LOG_INFO("my_button %" LV_PRIu32 " is pressed (x:%d y:%d)", data->btn_id, (int)x, (int)y);
         }
         else {
-            LV_LOG_INFO("button %" LV_PRIu32 " is released (x:%d y:%d)", data->btn_id, (int)x, (int)y);
+            LV_LOG_INFO("my_button %" LV_PRIu32 " is released (x:%d y:%d)", data->btn_id, (int)x, (int)y);
         }
     }
 

@@ -742,7 +742,7 @@ static void theme_apply(lv_theme_t * th, lv_obj_t * obj)
         if(parent && lv_obj_check_type(parent, &lv_tabview_class) && lv_obj_get_index(obj) == 1) {
             return;
         }
-        /*Tabview button container*/
+        /*Tabview my_button container*/
         else if(lv_obj_check_type(parent, &lv_tabview_class) && lv_obj_get_index(obj) == 0) {
             lv_obj_add_style(obj, &theme->styles.bg_color_white, 0);
             lv_obj_add_style(obj, &theme->styles.outline_primary, LV_STATE_FOCUS_KEY);

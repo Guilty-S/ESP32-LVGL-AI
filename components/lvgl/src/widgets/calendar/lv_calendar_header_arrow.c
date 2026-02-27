@@ -115,7 +115,7 @@ static void month_event_cb(lv_event_t * e)
     LV_ASSERT_FORMAT_MSG(newd.year >= 0 && newd.month >= 1 && newd.month <= 12,
                          "Invalid date: %d-%d", newd.year, newd.month);
 
-    /*The last child is the right button*/
+    /*The last child is the right my_button*/
     if(lv_obj_get_child(header, 0) == btn) {
         if(newd.month == 1) {
             newd.month = 12;

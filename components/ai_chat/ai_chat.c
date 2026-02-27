@@ -8,6 +8,7 @@
 #include "cJSON.h"
 #include <string.h>
 #include <stdio.h>
+#include "esp_lvgl_port.h"
 // #define AI_API_URL      "http://1.95.142.151:3000/v1/chat/completions"
 // #define AI_API_KEY      "sk-WQYbcQdw9N3l7JMnBN4i5c4mqSLjEyfHg4MJevYbMWQC5tIe" // claude
 // #define AI_MODEL_NAME   "claude-3-5-sonnet-20240620"
@@ -30,6 +31,8 @@ static ai_config_t current_conf = {
     .welcome_msg = "Hi! I am Claude 3.5."
 };
 
+static char ai_buffer[512];
+static int ai_buf_pos = 0;
 void ai_chat_set_config(ai_config_t conf) {
     current_conf = conf;
 }
@@ -158,7 +161,29 @@ esp_err_t ai_chat_request(const char *prompt) {
 
     return err;
 }
-
+void my_ai_stream_cb(const char *fragment) {
+    // 1. 先把收到的碎片存进缓冲区，而不是直接画屏幕
+    int len = strlen(fragment);
+    if (ai_buf_pos + len < sizeof(ai_buffer) - 1) {
+        strcpy(ai_buffer + ai_buf_pos, fragment);
+        ai_buf_pos += len;
+    }
+    // 2. 只有当缓冲区攒够了 15 个字符，或者包含换行符时，才去刷新屏幕
+    // 这样可以把 100 次每秒的刷新降到 5-6 次，既流畅又不卡顿
+    if (ai_buf_pos > 15 || strchr(fragment, '\n')) {
+        if (lvgl_port_lock(portMAX_DELAY)) {
+            // 一次性把攒好的字加上去
+            lv_textarea_add_text(guider_ui.screen_label_answer, ai_buffer);
+            // 确保滚动条在最下面
+            // (如果是 LVGL 8.3 及以上，通常加字会自动滚，这行可选)
+            // lv_obj_scroll_to_view(lv_textarea_get_cursor_pos(guider_ui.screen_ta_1), LV_ANIM_OFF);
+            lvgl_port_unlock();
+        }
+        // 3. 清空缓冲区，准备攒下一波
+        ai_buf_pos = 0;
+        ai_buffer[0] = '\0';
+    }
+}
 // 独立的 AI 测试任务
 static void ai_test_task(void *param) {
     const char *my_question = "你是什么模型？50字介绍(英文)"; // 故意让它多说点测试流式速度
