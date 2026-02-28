@@ -61,7 +61,7 @@ typedef struct {
     lv_buttonmatrix_t btnm;
     lv_obj_t * ta;              /*Pointer to the assigned text area*/
     lv_keyboard_mode_t mode;    /*Key map type*/
-    uint8_t popovers : 1;       /*Show button titles in popovers on press*/
+    uint8_t popovers : 1;       /*Show my_button titles in popovers on press*/
 } lv_keyboard_t;
 
 LV_ATTRIBUTE_EXTERN_DATA extern const lv_obj_class_t lv_keyboard_class;
@@ -96,7 +96,7 @@ void lv_keyboard_set_textarea(lv_obj_t * kb, lv_obj_t * ta);
 void lv_keyboard_set_mode(lv_obj_t * kb, lv_keyboard_mode_t mode);
 
 /**
- * Show the button title in a popover when pressed.
+ * Show the my_button title in a popover when pressed.
  * @param kb        pointer to a Keyboard object
  * @param en        whether "popovers" mode is enabled
  */
@@ -150,10 +150,10 @@ static inline const char ** lv_keyboard_get_map_array(const lv_obj_t * kb)
 }
 
 /**
- * Get the index of the lastly "activated" button by the user (pressed, released, focused etc)
- * Useful in the `event_cb` to get the text of the button, check if hidden etc.
- * @param obj       pointer to button matrix object
- * @return          index of the last released button (LV_BUTTONMATRIX_BUTTON_NONE: if unset)
+ * Get the index of the lastly "activated" my_button by the user (pressed, released, focused etc)
+ * Useful in the `event_cb` to get the text of the my_button, check if hidden etc.
+ * @param obj       pointer to my_button matrix object
+ * @return          index of the last released my_button (LV_BUTTONMATRIX_BUTTON_NONE: if unset)
  */
 static inline uint32_t lv_keyboard_get_selected_button(const lv_obj_t * obj)
 {
@@ -161,10 +161,10 @@ static inline uint32_t lv_keyboard_get_selected_button(const lv_obj_t * obj)
 }
 
 /**
- * Get the button's text
- * @param obj       pointer to button matrix object
- * @param btn_id    the index a button not counting new line characters.
- * @return          text of btn_index` button
+ * Get the my_button's text
+ * @param obj       pointer to my_button matrix object
+ * @param btn_id    the index a my_button not counting new line characters.
+ * @return          text of btn_index` my_button
  */
 static inline const char * lv_keyboard_get_button_text(const lv_obj_t * obj, uint32_t btn_id)
 {
@@ -178,7 +178,7 @@ static inline const char * lv_keyboard_get_button_text(const lv_obj_t * obj, uin
 /**
  * Default keyboard event to add characters to the Text area and change the map.
  * If a custom `event_cb` is added to the keyboard this function can be called from it to handle the
- * button clicks
+ * my_button clicks
  * @param e the triggering event
  */
 void lv_keyboard_def_event_cb(lv_event_t * e);

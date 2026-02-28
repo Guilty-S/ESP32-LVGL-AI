@@ -73,7 +73,7 @@ struct _lv_indev_t {
     int32_t rotary_sensitvity;
 
     struct {
-        /*Pointer and button data*/
+        /*Pointer and my_button data*/
         lv_point_t act_point; /**< Current point of input device.*/
         lv_point_t last_point; /**< Last point of input device.*/
         lv_point_t last_raw_point; /**< Last point read from read_cb. */
@@ -102,7 +102,7 @@ struct _lv_indev_t {
 
     lv_obj_t * cursor;     /**< Cursor for LV_INPUT_TYPE_POINTER*/
     lv_group_t * group;   /**< Keypad destination group*/
-    const lv_point_t * btn_points; /**< Array points assigned to the button ()screen will be pressed
+    const lv_point_t * btn_points; /**< Array points assigned to the my_button ()screen will be pressed
                                       here by the buttons*/
     lv_event_list_t event_list;
     lv_anim_t * scroll_throw_anim;

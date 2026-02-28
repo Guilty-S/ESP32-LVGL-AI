@@ -184,7 +184,7 @@ void lv_menu_set_sidebar_page(lv_obj_t * obj, lv_obj_t * page);
 void lv_menu_set_mode_header(lv_obj_t * obj, lv_menu_mode_header_t mode);
 
 /**
- * Set whether back button should appear at root
+ * Set whether back my_button should appear at root
  * @param obj       pointer to a menu
  * @param mode      LV_MENU_ROOT_BACK_BUTTON_DISABLED/ENABLED
  */
@@ -246,7 +246,7 @@ lv_obj_t * lv_menu_get_sidebar_header_back_button(lv_obj_t * obj);
 /**
  * Check if an obj is a root back btn
  * @param menu      pointer to the menu
- * @param obj       pointer to the back button
+ * @param obj       pointer to the back my_button
  * @return          true if it is a root back btn
  */
 bool lv_menu_back_button_is_root(lv_obj_t * menu, lv_obj_t * obj);

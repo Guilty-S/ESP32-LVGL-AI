@@ -48,7 +48,7 @@ static void set_children_focusable(bool focusable)
         lv_obj_clear_flag(guider_ui.screen_btn_2, LV_OBJ_FLAG_CLICK_FOCUSABLE);
         lv_obj_clear_flag(guider_ui.screen_btn_3, LV_OBJ_FLAG_CLICK_FOCUSABLE);
         lv_obj_clear_flag(guider_ui.screen_btn_5, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-        
+
         /* 焦点会自动回到 btn_4 (因为它是组里剩下的合法对象) */
     }
 }
@@ -61,7 +61,7 @@ static void cont_1_anim_cb(void * var, int32_t v)
     lv_obj_t * obj = var;
     int32_t w;
 
-    int32_t min_width = 0;   
+    int32_t min_width = 0;
     int32_t max_width = 120; // 【注意】：加了 btn_5，宽度可能需要从 130 改大到 160 左右
 
     w = lv_map(v, 0, 256, min_width, max_width);
@@ -103,12 +103,12 @@ void child_btn_event_cb(lv_event_t * e)
 
             lv_anim_t a;
             lv_anim_init(&a);
-            lv_anim_set_var(&a, guider_ui.screen_cont_1); 
+            lv_anim_set_var(&a, guider_ui.screen_cont_1);
             lv_anim_set_exec_cb(&a, cont_1_anim_cb);
             lv_anim_set_time(&a, 200);
-            lv_anim_set_values(&a, 256, 0); 
+            lv_anim_set_values(&a, 256, 0);
             lv_anim_start(&a);
-            
+
             is_expanded = false;
             lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);
         }
@@ -123,8 +123,8 @@ void btn_4_event_cb(lv_event_t * e)
     if(lv_event_get_code(e) == LV_EVENT_CLICKED) {
         lv_anim_t a;
         lv_anim_init(&a);
-        
-        lv_anim_set_var(&a, guider_ui.screen_cont_1); 
+
+        lv_anim_set_var(&a, guider_ui.screen_cont_1);
         lv_anim_set_exec_cb(&a, cont_1_anim_cb);
         lv_anim_set_time(&a, 200);
 
@@ -139,7 +139,7 @@ void btn_4_event_cb(lv_event_t * e)
             is_expanded = false;
             lv_obj_clear_flag(guider_ui.screen_label_ask, LV_OBJ_FLAG_HIDDEN);//恢复
         }
-        
+
         lv_anim_start(&a);
     }
 }
@@ -156,7 +156,7 @@ void custom_init(lv_ui *ui)
     lv_obj_set_style_opa(ui->screen_btn_2, 0, 0);
     lv_obj_set_style_opa(ui->screen_btn_3, 0, 0);
     lv_obj_set_style_opa(ui->screen_btn_5, 0, 0);
-    
+
     is_expanded = false;
     // 1. 禁用滑动条
     lv_obj_set_scrollbar_mode(ui->screen_label_ask, LV_SCROLLBAR_MODE_OFF);
@@ -254,4 +254,15 @@ void set_home_city(lv_ui *ui, const char* city_name) {
 }
 void update_local_ui_bridge(const char* city_name) {
     set_home_city(&guider_ui, city_name);
+}
+
+void lvgl_ui_init(void) {
+    if (lvgl_port_lock(0)) {
+        setup_ui(&guider_ui);
+        custom_init(&guider_ui);
+        lv_obj_set_style_text_line_space(guider_ui.screen_label_answer, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
+        lv_obj_set_scrollbar_mode(guider_ui.screen_label_ask, LV_SCROLLBAR_MODE_OFF);
+        lvgl_port_unlock();
+    }
 }

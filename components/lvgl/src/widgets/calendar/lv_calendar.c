@@ -150,7 +150,7 @@ void lv_calendar_set_showed_date(lv_obj_t * obj, uint32_t year, uint32_t month)
 
     highlight_update(obj);
 
-    /*Reset the focused button if the days changes*/
+    /*Reset the focused my_button if the days changes*/
     if(lv_buttonmatrix_get_selected_button(calendar->btnm) != LV_BUTTONMATRIX_BUTTON_NONE) {
         lv_buttonmatrix_set_selected_button(calendar->btnm, day_first + 7);
     }

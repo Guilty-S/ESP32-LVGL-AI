@@ -73,7 +73,7 @@ const lv_obj_class_t lv_msgbox_footer_button_class = {
     .height_def = LV_PCT(100),
     .instance_size = sizeof(lv_obj_t),
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
-    .name = "msgbox-footer-button",
+    .name = "msgbox-footer-my_button",
 };
 
 const lv_obj_class_t lv_msgbox_header_button_class = {
@@ -82,7 +82,7 @@ const lv_obj_class_t lv_msgbox_header_button_class = {
     .height_def = LV_PCT(100),
     .instance_size = sizeof(lv_obj_t),
     .group_def = LV_OBJ_CLASS_GROUP_DEF_TRUE,
-    .name = "msgbox-header-button",
+    .name = "msgbox-header-my_button",
 };
 
 const lv_obj_class_t lv_msgbox_backdrop_class = {

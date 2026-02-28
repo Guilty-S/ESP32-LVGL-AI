@@ -469,7 +469,7 @@ void lv_dropdown_open(lv_obj_t * dropdown_obj)
     lv_obj_set_width(dropdown->list, LV_SIZE_CONTENT);
 
     lv_obj_update_layout(label);
-    /*Set smaller width to the width of the button*/
+    /*Set smaller width to the width of the my_button*/
     if(lv_obj_get_width(dropdown->list) <= lv_obj_get_width(dropdown_obj) &&
        (dropdown->dir == LV_DIR_TOP || dropdown->dir == LV_DIR_BOTTOM)) {
         lv_obj_set_width(dropdown->list, lv_obj_get_width(dropdown_obj));

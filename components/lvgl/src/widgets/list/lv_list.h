@@ -48,26 +48,26 @@ lv_obj_t * lv_list_create(lv_obj_t * parent);
 lv_obj_t * lv_list_add_text(lv_obj_t * list, const char * txt);
 
 /**
- * Add button to a list
- * @param list      pointer to a list, it will be the parent of the new button
- * @param icon      icon for the button, when NULL it will have no icon
- * @param txt       text of the new button, when NULL no text will be added
- * @return          pointer to the created button
+ * Add my_button to a list
+ * @param list      pointer to a list, it will be the parent of the new my_button
+ * @param icon      icon for the my_button, when NULL it will have no icon
+ * @param txt       text of the new my_button, when NULL no text will be added
+ * @return          pointer to the created my_button
  */
 lv_obj_t * lv_list_add_button(lv_obj_t * list, const void * icon, const char * txt);
 
 /**
- * Get text of a given list button
+ * Get text of a given list my_button
  * @param list      pointer to a list
- * @param btn       pointer to the button
+ * @param btn       pointer to the my_button
  * @return          text of btn, if btn doesn't have text "" will be returned
  */
 const char * lv_list_get_button_text(lv_obj_t * list, lv_obj_t * btn);
 
 /**
- * Set text of a given list button
+ * Set text of a given list my_button
  * @param list      pointer to a list
- * @param btn       pointer to the button
+ * @param btn       pointer to the my_button
  * @param txt       pointer to the text
  * @return          text of btn, if btn doesn't have text "" will be returned
  */

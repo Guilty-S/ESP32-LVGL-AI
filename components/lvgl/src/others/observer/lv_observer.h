@@ -331,8 +331,8 @@ lv_observer_t * lv_obj_bind_state_if_not_eq(lv_obj_t * obj, lv_subject_t * subje
 
 #if LV_USE_BUTTON
 /**
- * Set an integer subject to 1 when a button is checked and set it 0 when unchecked.
- * @param obj       pointer to a button
+ * Set an integer subject to 1 when a my_button is checked and set it 0 when unchecked.
+ * @param obj       pointer to a my_button
  * @param subject   pointer to a subject
  * @return          pointer to the created observer
  */

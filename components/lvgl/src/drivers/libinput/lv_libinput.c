@@ -599,7 +599,7 @@ static void _read_keypad(lv_libinput_t * dsc, struct libinput_event * event)
             }
 #endif /* LV_LIBINPUT_XKB */
             if(evt->key_val != 0) {
-                /* Only record button state when actual output is produced to prevent widgets from refreshing */
+                /* Only record my_button state when actual output is produced to prevent widgets from refreshing */
                 evt->pressed = (key_state == LIBINPUT_KEY_STATE_RELEASED) ? LV_INDEV_STATE_RELEASED : LV_INDEV_STATE_PRESSED;
 
                 // just release the key immediatly after it got pressed.

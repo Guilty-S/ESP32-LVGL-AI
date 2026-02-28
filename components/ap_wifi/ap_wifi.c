@@ -8,6 +8,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+#include "my_sntp.h"
 
 #define TAG     "apcfg"
 
@@ -182,5 +183,21 @@ void ap_wifi_apcfg(bool enable)
             .receive_fn = ws_receive_handle,
         };
         web_ws_start(&ws);
+    }
+}
+
+//自添加函数
+void wifi_state_handle(WIFI_STATE state) {
+    if (state == WIFI_STATE_CONNECTED) {
+        my_sntp_init();
+        setenv("TZ", "CST-8", 1);
+        tzset();
+        ESP_LOGI(TAG, "Wifi connected");
+
+        // 【可选】如果你想连上WiFi后自动和AI说一句话，也可以在这里写：
+        // ai_chat_start();
+
+    } else if (state == WIFI_STATE_DISCONNECTED) {
+        ESP_LOGI(TAG, "Wifi disconnected");
     }
 }

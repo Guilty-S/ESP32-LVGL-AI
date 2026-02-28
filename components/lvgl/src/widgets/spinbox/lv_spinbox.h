@@ -42,7 +42,7 @@ typedef struct {
     uint32_t digit_count : 4;
     uint32_t dec_point_pos : 4; /*if 0, there is no separator and the number is an integer*/
     uint32_t rollover : 1;   /* Set to true for rollover functionality*/
-    uint32_t digit_step_dir : 2; /* the direction the digit will step on encoder button press when editing*/
+    uint32_t digit_step_dir : 2; /* the direction the digit will step on encoder my_button press when editing*/
 } lv_spinbox_t;
 
 LV_ATTRIBUTE_EXTERN_DATA extern const lv_obj_class_t lv_spinbox_class;
@@ -108,7 +108,7 @@ void lv_spinbox_set_range(lv_obj_t * obj, int32_t range_min, int32_t range_max);
 void lv_spinbox_set_cursor_pos(lv_obj_t * obj, uint32_t pos);
 
 /**
- * Set direction of digit step when clicking an encoder button while in editing mode
+ * Set direction of digit step when clicking an encoder my_button while in editing mode
  * @param obj           pointer to spinbox
  * @param direction     the direction (LV_DIR_RIGHT or LV_DIR_LEFT)
  */

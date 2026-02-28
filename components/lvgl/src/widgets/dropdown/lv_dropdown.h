@@ -38,7 +38,7 @@ LV_EXPORT_CONST_INT(LV_DROPDOWN_POS_LAST);
 typedef struct {
     lv_obj_t obj;
     lv_obj_t * list;                /**< The dropped down list*/
-    const char * text;              /**< Text to display on the dropdown's button*/
+    const char * text;              /**< Text to display on the dropdown's my_button*/
     const void * symbol;            /**< Arrow or other icon when the drop-down list is closed*/
     char * options;                 /**< Options in a '\n' separated list*/
     uint32_t option_cnt;            /**< Number of options*/
@@ -74,8 +74,8 @@ lv_obj_t * lv_dropdown_create(lv_obj_t * parent);
  *====================*/
 
 /**
- * Set text of the drop-down list's button.
- * If set to `NULL` the selected option's text will be displayed on the button.
+ * Set text of the drop-down list's my_button.
+ * If set to `NULL` the selected option's text will be displayed on the my_button.
  * If set to a specific text then that text will be shown regardless of the selected option.
  * @param obj       pointer to a drop-down list object
  * @param txt       the text as a string (Only its pointer is saved)
@@ -127,7 +127,7 @@ void lv_dropdown_set_selected(lv_obj_t * obj, uint32_t sel_opt);
 void lv_dropdown_set_dir(lv_obj_t * obj, lv_dir_t dir);
 
 /**
- * Set an arrow or other symbol to display when on drop-down list's button. Typically a down caret or arrow.
+ * Set an arrow or other symbol to display when on drop-down list's my_button. Typically a down caret or arrow.
  * @param obj       pointer to drop-down list object
  * @param symbol    a text like `LV_SYMBOL_DOWN`, an image (pointer or path) or NULL to not draw symbol icon
  * @note angle and zoom transformation can be applied if the symbol is an image.
@@ -154,7 +154,7 @@ void lv_dropdown_set_selected_highlight(lv_obj_t * obj, bool en);
 lv_obj_t * lv_dropdown_get_list(lv_obj_t * obj);
 
 /**
- * Get text of the drop-down list's button.
+ * Get text of the drop-down list's my_button.
  * @param obj   pointer to a drop-down list object
  * @return      the text as string, `NULL` if no text
  */

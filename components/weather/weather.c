@@ -5,6 +5,7 @@
 #include "cJSON.h"
 #include "weather.h"
 #include "wifi_manager.h"
+#include "custom.h"
 #include <string.h>
 #include <stdio.h>
 static weather_update_cb_t g_weather_ui_cb = NULL; // 存放回调函数的指针
@@ -226,5 +227,6 @@ static void weather_task(void *param) {
 */
 void weather_start(void) {
     //这里会新建一个任务，定时获取天气状况信息
+    weather_set_ui_callback(update_weather_ui_bridge);
     xTaskCreatePinnedToCore(weather_task, "weather", 4096, NULL, 2, NULL, 1);
 }
